@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="576"
+   height="576"
+   viewBox="0 0 152.4 152.4"
+   version="1.1"
+   id="svg8"
+   inkscape:version="0.92.1 r15371"
+   sodipodi:docname="thumbnail.svg"
+   inkscape:export-filename="/home/branko/projects/factorio/personal-logistics-templates/thumbnail.png"
+   inkscape:export-xdpi="24"
+   inkscape:export-ydpi="24">
+  <defs
+     id="defs2" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.35355339"
+     inkscape:cx="-697.1345"
+     inkscape:cy="450.83026"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1920"
+     inkscape:window-height="1027"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     units="px" />
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-144.59996)">
+    <path
+       inkscape:connector-curvature="0"
+       style="fill:#000000;fill-opacity:1;stroke-width:0.29765624"
+       d="m 0,144.59996 h 152.4 v 152.4 H 0 Z"
+       id="path4603" />
+    <g
+       class=""
+       id="g4607"
+       transform="matrix(0.29321789,0,0,0.29321789,1.1362202,145.72445)">
+      <path
+         style="fill:#ffffff;fill-opacity:1"
+         inkscape:connector-curvature="0"
+         d="m 407,24.98 v 14.04 h 16 V 25 Z M 88.99,25 V 39.03 H 105 V 25 Z M 487,57 H 344.9 V 72.96 H 487 Z M 167,57 H 25 v 15.98 h 142 z m 256,33.93 h -16.1 v 27.97 l 13.7,0.1 h 2.4 z m -318,0.1 H 88.97 V 119.1 H 105 Z m 272,45.87 -0.1,32.1 h -78.5 l -16,-32 h -52.8 l -16,32.1 L 135,169 V 137 H 55.03 L 42.99,185 199,214.4 V 208 c 0.1,-31.4 25.7,-56.9 57.1,-57 31.3,0 57,25.6 56.9,57 0,4.1 0.1,6.4 0.1,6.4 L 469,185.1 457,137 Z M 256.1,169 c -21.6,0 -39,17.4 -39.1,39.1 0.1,21.5 17.5,38.9 39.1,38.9 21.6,0 39,-17.4 38.9,-39 0.1,-21.5 -17.3,-39 -38.9,-39 z m -0.2,14 c 13.8,0 25,11.3 25.1,25 0,13.7 -11.3,25.1 -25,25 -13.7,0 -25.1,-11.3 -25,-24.9 0,-13.8 11.3,-25 24.9,-25.1 z M 201.2,223.5 215,279 h 82 l 13.9,-55.4 C 304.1,247.5 282.1,265 256.1,265 230,265 208,247.4 201.2,223.5 Z m -35.8,4.2 -105.05,93.4 83.85,107.7 c 5,-5 11.3,-8.8 18.2,-11.1 l -62.2,-99.7 87.9,-73 -3.4,-13.4 z m 181.3,0.2 -19.4,3.8 -3.3,13.4 87.8,73 -62.2,99.6 c 7,2.3 13.2,6.2 18.3,11.3 L 451.7,321.2 Z M 176,433.6 c -15,0 -26.9,11.9 -26.9,26.7 0,14.9 11.9,26.7 27,26.8 14.9,-0.1 26.9,-12 26.9,-26.8 -0.1,-14.8 -11.9,-26.7 -27,-26.7 z m 159.9,0 c -14.9,0.1 -27,11.9 -26.9,26.8 0,14.7 11.9,26.6 27,26.6 15,0 27,-11.8 26.9,-26.7 0.1,-14.8 -11.9,-26.7 -27,-26.7 z"
+         id="path4605" />
+    </g>
+    <g
+       id="g7161"
+       transform="translate(0.35107482,3.3072918)">
+      <g
+         id="g6473"
+         class=""
+         transform="matrix(0.09001519,0,0,0.09001519,57.125766,224.20391)">
+        <path
+           sodipodi:nodetypes="ccccccccccccccc"
+           id="path6471"
+           d="m 169,57 v 430 h 78 V 57 Z m 14,71 h 18 v 320 h -18 z m 32,192 h 18 v 128 h -18 z"
+           inkscape:connector-curvature="0"
+           style="fill:#ffffff;fill-opacity:1" />
+      </g>
+      <g
+         id="g6473-6"
+         class=""
+         transform="matrix(0.09001519,0,0,0.09001519,58.249644,224.20391)">
+        <path
+           sodipodi:nodetypes="ccccccccccccccc"
+           id="path6471-7"
+           d="M 25,105 V 295 H 71 V 105 Z m 0,208 v 30 h 46 v -30 z m 0,48 V 487 H 71 V 361 Z"
+           inkscape:connector-curvature="0"
+           style="fill:#ffffff;fill-opacity:1" />
+      </g>
+      <g
+         id="g6473-5"
+         class=""
+         transform="matrix(0.09001519,0,0,0.09001519,57.687705,224.20391)">
+        <path
+           sodipodi:nodetypes="cccccccccc"
+           id="path6471-3"
+           d="m 89,153 v 270 h 62 V 153 Z m 0,288 v 46 h 62 v -46 z"
+           inkscape:connector-curvature="0"
+           style="fill:#ffffff;fill-opacity:1" />
+      </g>
+      <g
+         id="g6473-6-5"
+         class=""
+         transform="matrix(0.09001519,0,0,0.09001519,78.167472,224.20391)">
+        <path
+           sodipodi:nodetypes="ccccccccccccccc"
+           id="path6471-7-6"
+           d="M 25,122.63591 V 247.9709 H 71 V 122.63591 Z M 25,265.9709 V 366.51455 H 71 V 265.9709 Z m 0,118.54365 V 487 H 71 V 384.51455 Z"
+           inkscape:connector-curvature="0"
+           style="fill:#ffffff;fill-opacity:1" />
+      </g>
+      <g
+         id="g6473-5-1"
+         class=""
+         transform="matrix(0.09001519,0,0,0.09001519,77.605533,224.20391)">
+        <path
+           sodipodi:nodetypes="cccccccccc"
+           id="path6471-3-2"
+           d="m 89,111.84954 v 287.63591 h 62 V 111.84954 Z m 0,305.63591 V 487 h 62 v -69.51455 z"
+           inkscape:connector-curvature="0"
+           style="fill:#ffffff;fill-opacity:1" />
+      </g>
+    </g>
+  </g>
+</svg>
