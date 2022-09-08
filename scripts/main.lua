@@ -30,6 +30,17 @@ function main.initialise_player_data(player)
 end
 
 
+--- Destroys all mod data for a specific player.
+--
+-- @param player LuaPlayer Player for which to destroy the data.
+--
+function main.destroy_player_data(player)
+    gui.destroy(player)
+
+    global.player_data[player.index] = nil
+end
+
+
 --- Checks if passed-in list of blueprint entities constitute a valid personal logistics template that can be imported.
 --
 -- @param entities {BlueprintEntity} List of blueprint entities to check.

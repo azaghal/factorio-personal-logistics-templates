@@ -53,6 +53,19 @@ function gui.initialise(player)
 end
 
 
+--- Destroys all GUI elements for passed-in player.
+--
+-- @param player LuaPlayer Player for which to destroy the GUI.
+--
+function gui.destroy_player_data(player)
+    if not global.player_data[player.index].window then
+        return
+    end
+
+    global.player_data[player.index].window.destroy()
+end
+
+
 --- Sets mode of operation for GUI, showing or hiding the relevant elements.
 --
 -- @param player LuaPlayer Player for which to set the GUI mode.
