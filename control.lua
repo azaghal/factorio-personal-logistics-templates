@@ -1,2 +1,12 @@
 -- Copyright (c) 2022 Branko Majic
 -- Provided under MIT license. See LICENSE for details.
+
+
+local handlers = require("scripts.handlers")
+
+
+-- Handler registration
+-- ====================
+
+script.on_init(handlers.on_init)
+script.on_event(defines.events.on_player_cursor_stack_changed, handlers.on_player_cursor_stack_changed)
