@@ -3,6 +3,7 @@
 
 
 local main = require("scripts.main")
+local gui = require("scripts.gui")
 
 
 local handlers = {}
@@ -44,6 +45,25 @@ end
 --
 function handlers.on_init()
     main.initialise_data()
+end
+
+
+--- Registers GUI handlers for all relevant modules.
+--
+function handlers.register_gui_handlers()
+    main.register_gui_handlers()
+end
+
+
+--- Processes clicks on GUI elements.
+--
+-- @param event EventData Event data as passed-in by the game engine.
+--
+function handlers.on_gui_click(event)
+    local player = game.players[event.player_index]
+    local element = event.element
+
+    gui.on_click(player, element)
 end
 
 

@@ -88,4 +88,34 @@ function gui.set_mode(player, mode)
 end
 
 
+-- Maps GUI events to list of handlers to invoke.
+gui.handlers = {}
+
+--- Registers handler with click event on a specific GUI element.
+--
+-- Multiple handlers can be registered with GUI element. Handlers are invoked in the order they have been registered.
+--
+-- @param name string Name of GUI element for which to register click handler.
+-- @param func callable Callable to invoke when GUI element is clicked on.
+--
+function gui.register_handler(name, func)
+    gui.handlers[name] = gui.handlers[name] or {}
+    table.insert(gui.handlers[name], func)
+end
+
+
+--- Invokes registered handlers for passed-in GUI element.
+--
+-- @param player LuaPlayer Player that clicked on the GUI element.
+-- @param element LuaGuiElement GUI element that was clicked on.
+--
+function gui.on_click(player, element)
+    if string.find(element.name, "^plt_") then
+        for _, func in pairs(gui.handlers[element.name] or {}) do
+            func(player)
+        end
+    end
+end
+
+
 return gui

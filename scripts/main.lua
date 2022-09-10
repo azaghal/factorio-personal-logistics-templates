@@ -83,4 +83,85 @@ function main.update_button_visibility(player)
 end
 
 
+--- Exports personal logistics template for given player into a held (empty) blueprint.
+--
+-- @param player LuaPlayer Player that has requested the export.
+--
+function main.export(player)
+
+    -- Make sure the player is holding an empty blueprint before proceeding.
+    if not (player.cursor_stack and player.cursor_stack.valid_for_read and player.cursor_stack.name == "blueprint") then
+        player.print({"error.plt-blueprint-not-empty"})
+        return
+    end
+
+    -- Initialise list of constant combinators that will hold the template. Combinators are meant to be laid-out in a
+    -- grid pattern, and populated column by column. Each column can contain a maximum of 10 combinators.
+    local combinators = {}
+
+    for i = 1, math.ceil(player.character.request_slot_count/10) do
+        local x = math.ceil(i/10)
+        local y = i % 10
+        y = y == 0 and 10 or y
+
+        table.insert(
+            combinators,
+            {
+                entity_number = i,
+                name = "constant-combinator",
+                position = {x = x, y = y},
+                control_behavior = {filters = {}}
+            }
+        )
+    end
+
+    -- Populate combinators with slot requests.
+    for slot_index = 1, player.character.request_slot_count do
+        local slot = player.get_personal_logistic_slot(slot_index)
+
+        if slot.name then
+            -- Each combinator stores configuration for 10 slots at a time.
+            local combinator = combinators[math.ceil(slot_index/10)]
+            local filter_index = slot_index % 10
+            filter_index = filter_index == 0 and 10 or filter_index
+
+            -- Minimum quantities are kept in the first row of a combinator.
+            local filter_min = {
+                index = filter_index,
+                -- Combinator signals use signed 32-bit integers, whereas slot requests are unsigned 32-bit
+                -- integers. Store overflows as negative values.
+                count = slot.min > 2147483647 and - slot.min + 2147483647 or slot.min,
+                signal = {
+                    name = slot.name,
+                    type = "item"
+                }
+            }
+            table.insert(combinator.control_behavior.filters, filter_min)
+
+            -- Maximum quantities are kept in the second row of a combinator.
+            local filter_max = {
+                index = filter_index + 10,
+                -- Combinator signals use signed 32-bit integers, whereas slot requests are unsigned 32-bit
+                -- integers. Store overflows as negative values.
+                count = slot.max > 2147483647 and - slot.max + 2147483647 or slot.max,
+                signal = {
+                    name = slot.name,
+                    type = "item"
+                }
+            }
+            table.insert(combinator.control_behavior.filters, filter_max)
+        end
+    end
+
+    player.cursor_stack.set_blueprint_entities(combinators)
+end
+
+
+--- Registers GUI handlers for the module.
+--
+function main.register_gui_handlers()
+    gui.register_handler("plt_export_button", main.export)
+end
+
+
 return main
