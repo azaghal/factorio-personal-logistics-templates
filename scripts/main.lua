@@ -52,10 +52,17 @@ function main.is_valid_template(entities)
         return false
     end
 
-    -- Only constant combinators are allowed in the list.
     for _, entity in pairs(entities) do
+        -- Only constant combinators are allowed in the list.
         if entity.name ~= "constant-combinator" then
             return false
+        end
+
+        -- All constant combinator filters must specify an item.
+        for _, filter in pairs(entity.control_behavior and entity.control_behavior.filters or {}) do
+            if filter.signal.type ~= "item" then
+                return false
+            end
         end
     end
 
@@ -157,10 +164,70 @@ function main.export(player)
 end
 
 
+--- Imports personal logistics template from a held blueprint.
+--
+-- @param player LuaPlayer Player that has requested the import.
+--
+function main.import(player)
+    local entities = player.get_blueprint_entities()
+
+    if not main.is_valid_template(entities) then
+        player.print({"error.plt-invalid-template"})
+        return
+    end
+
+    -- Sort the passed-in entities by coordinates - this should ensure that even if player was creating/modifying the
+    -- template by hand, it should still have correct ordering.
+    local sort_by_coordinate = function(elem1, elem2)
+        if elem1.position.x < elem2.position.x then
+            return true
+        elseif elem1.position.x == elem2.position.x and elem1.position.y < elem2.position.y then
+            return true
+        end
+
+        return false
+    end
+    table.sort(entities, sort_by_coordinate)
+
+    -- Clear the existing configuration.
+    for i = 1, player.character.request_slot_count do
+        player.set_personal_logistic_slot(i, {})
+    end
+
+    -- Import the personal logistics template. Each combinator represents one row of personal logistics.
+    for row, combinator in pairs(entities) do
+        if combinator.control_behavior then
+
+            -- Extract slot configuration from combinator filters.
+            local row_slots = {}
+            for _, filter in pairs(combinator.control_behavior.filters) do
+                if filter.index <= 10 then
+                    row_slots[filter.index] = row_slots[filter.index] or {}
+                    row_slots[filter.index].name = filter.signal.name
+                    row_slots[filter.index].min = filter.count < 0 and - filter.count + 2147483647 or filter.count
+                else
+                    row_slots[filter.index - 10] = row_slots[filter.index - 10] or {}
+                    row_slots[filter.index - 10].name = filter.signal.name
+                    row_slots[filter.index - 10].max = filter.count < 0 and - filter.count + 2147483647 or filter.count
+                end
+            end
+
+            -- Set the requests.
+            for row_index, slot in pairs(row_slots) do
+                local slot_index = (row - 1) * 10 + row_index
+                player.set_personal_logistic_slot(slot_index, slot)
+            end
+
+        end
+    end
+end
+
+
 --- Registers GUI handlers for the module.
 --
 function main.register_gui_handlers()
     gui.register_handler("plt_export_button", main.export)
+    gui.register_handler("plt_import_button", main.import)
 end
 
 
