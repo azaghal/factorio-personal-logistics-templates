@@ -3,4 +3,5 @@ Version: 999.999.999
 Date: 9999-99-99
   Changes:
   Features:
+    - Import and export player personal logistics requests as blueprint templates.
   Bugfixes:

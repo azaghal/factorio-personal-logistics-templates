@@ -96,7 +96,7 @@ end
 -- list. Top row of constant combinator filters is used for minimum quantities, while bottom represents maximum
 -- quantities. Filter icons are used to represent item in the slot.
 --
--- Since combinators use _unsigned_ 32-bit integers, and personal logistics slots use _signed_ 32-bit integers,
+-- Since combinators use _signed_ 32-bit integers, and personal logistics slots use _unsigned_ 32-bit integers,
 -- overflowing values are stored as negative values, with -1 corresponding to 2147483648, and -2147483648 corresponding
 -- to 4294967296.
 --
