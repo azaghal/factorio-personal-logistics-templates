@@ -11,8 +11,8 @@ About
 Features
 --------
 
--   Export personal logistics requests by opening up the character screen, picking up an empty blueprint and clicking with it onto the export button attached to the bottom-left of the character screen.
--   Import personal logistics requests blueprint by opening up the character screen, picking up a blueprint, and clicking with it onto the import button attached to the bottom-left of the character screen.
+-   Export personal logistics requests by opening up the character screen/spidetron window, picking up an empty blueprint and clicking with it onto the export button attached to the bottom-left of window.
+-   Import personal logistics requests blueprint by opening up the character screen/spidetron window, picking up a blueprint, and clicking with it onto the import button attached to the bottom-left of the window.
 -   Export/import buttons are hidden when holding an invalid personal logistics requests blueprint.
 
 

@@ -102,17 +102,22 @@ end
 -- overflowing values are stored as negative values, with -1 corresponding to 2147483648, and -2147483648 corresponding
 -- to 4294967296.
 --
--- @param player LuaPlayer Player for which to generate the list of blueprint entities.
+-- @param entity LuaEntity Entity for which to generate the list of blueprint entities. Must be character or spidetron.
 --
 -- @return {BlueprintEntity} List of blueprint entities (constant combinators) representing the configuration.
 --
-function main.personal_logistics_configuration_to_constant_combinators(player)
+function main.personal_logistics_configuration_to_constant_combinators(entity)
+
+    -- Determine function to invoke for reading logistic slot information.
+    local get_logistic_slot =
+        entity.type == "character" and entity.get_personal_logistic_slot or
+        entity.type == "spider-vehicle" and entity.get_vehicle_logistic_slot
 
     -- Initialise list of constant combinators that will hold the template. Combinators are meant to be laid-out in a
     -- grid pattern, and populated column by column. Each column can contain a maximum of 10 combinators.
     local combinators = {}
 
-    for i = 1, math.ceil(player.character.request_slot_count/10) do
+    for i = 1, math.ceil(entity.request_slot_count/10) do
         local x = math.ceil(i/10)
         local y = i % 10
         y = y == 0 and 10 or y
@@ -129,8 +134,8 @@ function main.personal_logistics_configuration_to_constant_combinators(player)
     end
 
     -- Populate combinators with slot requests.
-    for slot_index = 1, player.character.request_slot_count do
-        local slot = player.get_personal_logistic_slot(slot_index)
+    for slot_index = 1, entity.request_slot_count do
+        local slot = get_logistic_slot(slot_index)
 
         if slot.name then
             -- Each combinator stores configuration for 10 slots at a time.
@@ -236,9 +241,20 @@ function main.export(player)
         return
     end
 
-    local entities = main.personal_logistics_configuration_to_constant_combinators(player)
+    -- Determine what entity is targeted.
+    local entity
+    if player.opened_gui_type == defines.gui_type.controller then
+        entity = player.character
+    elseif player.opened_gui_type == defines.gui_type.entity and player.opened.type == "spider-vehicle" then
+        entity = player.opened
+    else
+        player.print({"error.plt-invalid-export-attempt"})
+        return
+    end
 
-    player.cursor_stack.set_blueprint_entities(entities)
+    local combinators = main.personal_logistics_configuration_to_constant_combinators(entity)
+
+    player.cursor_stack.set_blueprint_entities(combinators)
 
     main.update_button_visibility(player)
 end
@@ -256,15 +272,31 @@ function main.import(player)
         return
     end
 
+    -- Determine what entity is targeted.
+    local entity
+    if player.opened_gui_type == defines.gui_type.controller then
+        entity = player.character
+    elseif player.opened_gui_type == defines.gui_type.entity and player.opened.type == "spider-vehicle" then
+        entity = player.opened
+    else
+        player.print({"error.plt-invalid-import-attempt"})
+        return
+    end
+
+    -- Determine function to invoke for setting logistic slot information.
+    local set_logistic_slot =
+        entity.type == "character" and entity.set_personal_logistic_slot or
+        entity.type == "spider-vehicle" and entity.set_vehicle_logistic_slot
+
     -- Clear the existing configuration.
-    for i = 1, player.character.request_slot_count do
-        player.set_personal_logistic_slot(i, {})
+    for i = 1, entity.request_slot_count do
+        set_logistic_slot(i, {})
     end
 
     -- Set slot configuration from blueprint template.
     local slots = main.constant_combinators_to_personal_logistics_configuration(entities)
     for slot_index, slot in pairs(slots) do
-        player.set_personal_logistic_slot(slot_index, slot)
+        set_logistic_slot(slot_index, slot)
     end
 end
 

@@ -4,4 +4,5 @@ Date: 9999-99-99
   Changes:
   Features:
     - Import and export player personal logistics requests as blueprint templates.
+    - Import and export spidertron personal logistics requests as blueprint templates.
   Bugfixes:
