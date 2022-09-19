@@ -255,7 +255,13 @@ function main.export(player)
 
     local combinators = main.personal_logistics_configuration_to_constant_combinators(entity)
 
+    -- Set the blueprint content and change default icons.
     player.cursor_stack.set_blueprint_entities(combinators)
+    player.cursor_stack.blueprint_icons = {
+        { index = 1, signal = {type = "virtual", name = "signal-P"}},
+        { index = 2, signal = {type = "virtual", name = "signal-L"}},
+        { index = 3, signal = {type = "virtual", name = "signal-T"}},
+    }
 
     main.update_button_visibility(player)
 end
