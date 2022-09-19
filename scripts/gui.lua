@@ -62,6 +62,15 @@ function gui.initialise(player)
             tooltip = {"gui.plt-import"}
         }
 
+        local append_button = panel.add{
+            type = "sprite-button",
+            name = "plt_append_button",
+            style = "shortcut_bar_button_blue",
+            visible = false,
+            sprite = "plt-append-template-button",
+            tooltip = {"gui.plt-append"}
+        }
+
         global.player_data[player.index].windows[window_name] = window
     end
 end
@@ -93,10 +102,12 @@ function gui.set_mode(player, mode)
             window.visible = false
         elseif mode == "export" then
             window.plt_panel.plt_import_button.visible = false
+            window.plt_panel.plt_append_button.visible = false
             window.plt_panel.plt_export_button.visible = true
             window.visible = true
         elseif mode == "import" then
             window.plt_panel.plt_import_button.visible = true
+            window.plt_panel.plt_append_button.visible = true
             window.plt_panel.plt_export_button.visible = false
             window.visible = true
         end

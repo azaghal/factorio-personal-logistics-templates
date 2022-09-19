@@ -11,9 +11,18 @@ About
 Features
 --------
 
--   Export personal logistics requests by opening up the character screen/spidetron window, picking up an empty blueprint and clicking with it onto the export button attached to the bottom-left of window.
--   Import personal logistics requests blueprint by opening up the character screen/spidetron window, picking up a blueprint, and clicking with it onto the import button attached to the bottom-left of the window.
--   Export/import buttons are hidden when holding an invalid personal logistics requests blueprint.
+
+### Create templates
+
+Hold an empty blueprint while the character or spidetron windows are open, and an export button will be shown at bottom-left of the window. Clicking on the button while holding an empty blueprint will read information about currently configured personal logistics requests, and export them to blueprint in the form of constant combinators (see below section on format). The export button is visible _only_ when an empty, non-library blueprint is held.
+
+
+### Set requests from templates
+
+Hold a personal logistics requests template (blueprint) while the character or spidetron windows are open, and import buttons will be shown at bottom-left of the window. Buttons are shown _only_ when valid personal logistics template blueprints are held. Each button provides different mode of operation:
+
+-   Import held template, _replacing_ all existing personal logistics requests (button with arrow pointing up). Slot layout from the template is preserved.
+-   Append held template, _preserving_ all existing personal logistics requests (button with a plus sign). New requests are appended at the end, starting from a first blank row. This mode is useful for having a modular set of templates that can be combined as desired.
 
 
 ### Template format
@@ -61,3 +70,4 @@ All code, documentation, and assets implemented as part of this mod are released
 -   [build.sh (factorio_development.sh)](https://code.majic.rs/majic-scripts/), by Branko Majic, under [GPLv3](https://www.gnu.org/licenses/gpl-3.0.html).
 -   `graphics/icons/export-template-button.png`, which is a derivative based on Factorio game assets as provided by *Wube Software Ltd*. For details, see [Factorio Terms of Service](https://www.factorio.com/terms-of-service).
 -   `graphics/icons/import-template-button.png`, which is a derivative based on Factorio game assets as provided by *Wube Software Ltd*. For details, see [Factorio Terms of Service](https://www.factorio.com/terms-of-service).
+-   `graphics/icons/append-template-button.png`, which is a derivative based on Factorio game assets as provided by *Wube Software Ltd*. For details, see [Factorio Terms of Service](https://www.factorio.com/terms-of-service).

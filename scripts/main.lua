@@ -35,7 +35,7 @@ end
 -- @param player LuaPlayer Player for which to destroy the data.
 --
 function main.destroy_player_data(player)
-    gui.destroy(player)
+    gui.destroy_player_data(player)
 
     global.player_data[player.index] = nil
 end
@@ -301,11 +301,65 @@ function main.import(player)
 end
 
 
+--- Appends personal logistics template from a held blueprint, preserving the existing slot configuration.
+--
+-- @param player LuaPlayer Player that has requested the import.
+--
+function main.append(player)
+    local entities = player.get_blueprint_entities()
+
+    if not main.is_valid_template(entities) then
+        player.print({"error.plt-invalid-template"})
+        return
+    end
+
+    -- Determine what entity is targeted.
+    local entity
+    if player.opened_gui_type == defines.gui_type.controller then
+        entity = player.character
+    elseif player.opened_gui_type == defines.gui_type.entity and player.opened.type == "spider-vehicle" then
+        entity = player.opened
+    else
+        player.print({"error.plt-invalid-import-attempt"})
+        return
+    end
+
+    -- Determine what functions to use for setting/getting logistic slot information.
+    local set_logistic_slot =
+        entity.type == "character" and entity.set_personal_logistic_slot or
+        entity.type == "spider-vehicle" and entity.set_vehicle_logistic_slot
+
+    local get_logistic_slot =
+        entity.type == "character" and entity.get_personal_logistic_slot or
+        entity.type == "spider-vehicle" and entity.get_vehicle_logistic_slot
+
+    -- Retrieve existing requests.
+    local already_requesting = {}
+    for slot_index = 1, entity.request_slot_count do
+        local slot = get_logistic_slot(slot_index)
+        if slot.name then
+            already_requesting[slot.name] = true
+        end
+    end
+
+    -- Append new requests starting at the first free row.
+    local slots = main.constant_combinators_to_personal_logistics_configuration(entities)
+    local slot_index = math.ceil(entity.request_slot_count / 10) * 10 + 1
+    for _, slot in pairs(slots) do
+        if not already_requesting [slot.name] then
+            set_logistic_slot(slot_index, slot)
+            slot_index = slot_index + 1
+        end
+    end
+end
+
+
 --- Registers GUI handlers for the module.
 --
 function main.register_gui_handlers()
     gui.register_handler("plt_export_button", main.export)
     gui.register_handler("plt_import_button", main.import)
+    gui.register_handler("plt_append_button", main.append)
 end
 
 

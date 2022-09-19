@@ -3,7 +3,6 @@
 
 
 local handlers = require("scripts.handlers")
-local main = require("scripts.main")
 
 
 -- Handler registration
