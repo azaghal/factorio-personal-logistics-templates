@@ -40,6 +40,12 @@ In an individual constant combinator, the top ten signals correspond to minimum 
 Since constant combinators use _signed_ 32-bit integers, and personal logistics slots use _unsigned_ 32-bit integers, overflowing values are stored as negative values, with -1 corresponding to 2147483648, and -2147483648 corresponding to 4294967296. The 4294967296 (-2147483648) value specifically corresponds to infinte amount in a personal logistics request.
 
 
+Tips and tricks
+---------------
+
+-   Create an empty template blueprint, and use it to reset all personal logistics requests when needed.
+
+
 Known issues
 ------------
 

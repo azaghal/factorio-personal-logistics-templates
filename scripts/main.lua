@@ -114,10 +114,11 @@ function main.personal_logistics_configuration_to_constant_combinators(entity)
         entity.type == "spider-vehicle" and entity.get_vehicle_logistic_slot
 
     -- Initialise list of constant combinators that will hold the template. Combinators are meant to be laid-out in a
-    -- grid pattern, and populated column by column. Each column can contain a maximum of 10 combinators.
+    -- grid pattern, and populated column by column. Each column can contain a maximum of 10 combinators. Make sure that
+    -- at least one combinator is added in case there are no personal logistics requests configured.
     local combinators = {}
 
-    for i = 1, math.ceil(entity.request_slot_count/10) do
+    for i = 1, entity.request_slot_count == 0 and 1 or math.ceil(entity.request_slot_count/10) do
         local x = math.ceil(i/10)
         local y = i % 10
         y = y == 0 and 10 or y
