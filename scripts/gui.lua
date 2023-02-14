@@ -76,7 +76,7 @@ function gui.initialise(player)
             name = "plt_auto_trash_button",
             style = "shortcut_bar_button_blue",
             visible = false,
-            sprite = "plt-auto-trash-template-button",
+            sprite = "plt-auto-trash-button",
             tooltip = {"gui.plt-auto-trash"}
         }
 
