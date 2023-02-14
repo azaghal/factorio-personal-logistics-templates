@@ -412,7 +412,7 @@ function main.auto_trash(player)
     elseif player.opened_gui_type == defines.gui_type.entity and player.opened.type == "spider-vehicle" then
         entity = player.opened
     else
-        player.print({"error.plt-invalid-import-attempt"})
+        player.print({"error.plt-invalid-auto-trash-attempt"})
         return
     end
 
