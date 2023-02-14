@@ -88,6 +88,31 @@ function main.is_valid_template(entities)
 end
 
 
+--- Determines setter and getter functions for logistic slots for passed-in entity.
+--
+-- Characters and spidertrons use differently named functions, and this little helper allows to abstract away this
+-- detail.
+--
+-- @param entity LuaEntity Entity for which to get setter/getter.
+--
+-- @return {function, function} Setter and getter function for manipulating the logistics slots of an entity.
+--
+function main.get_logistic_slot_functions(entity)
+
+    local set_logistic_slot =
+        entity.type == "character" and entity.set_personal_logistic_slot or
+        entity.type == "spider-vehicle" and entity.set_vehicle_logistic_slot or
+        nil
+
+    local get_logistic_slot =
+        entity.type == "character" and entity.get_personal_logistic_slot or
+        entity.type == "spider-vehicle" and entity.get_vehicle_logistic_slot or
+        nil
+
+    return set_logistic_slot, get_logistic_slot
+end
+
+
 --- Updates visibility of import/export buttons for a given player based on held cursor stack.
 --
 -- @param player LuaPlayer Player for which to update button visibility.
@@ -308,10 +333,8 @@ function main.import(player)
         return
     end
 
-    -- Determine function to invoke for setting logistic slot information.
-    local set_logistic_slot =
-        entity.type == "character" and entity.set_personal_logistic_slot or
-        entity.type == "spider-vehicle" and entity.set_vehicle_logistic_slot
+    -- Determine what functions to use for setting/getting logistic slot information.
+    local set_logistic_slot, get_logistic_slot = main.get_logistic_slot_functions(entity)
 
     -- Clear the existing configuration.
     for i = 1, entity.request_slot_count do
@@ -350,13 +373,7 @@ function main.append(player)
     end
 
     -- Determine what functions to use for setting/getting logistic slot information.
-    local set_logistic_slot =
-        entity.type == "character" and entity.set_personal_logistic_slot or
-        entity.type == "spider-vehicle" and entity.set_vehicle_logistic_slot
-
-    local get_logistic_slot =
-        entity.type == "character" and entity.get_personal_logistic_slot or
-        entity.type == "spider-vehicle" and entity.get_vehicle_logistic_slot
+    local set_logistic_slot, get_logistic_slot = main.get_logistic_slot_functions(entity)
 
     -- Retrieve existing requests.
     local already_requesting = {}
@@ -400,13 +417,7 @@ function main.auto_trash(player)
     end
 
     -- Determine what functions to use for setting/getting logistic slot information.
-    local set_logistic_slot =
-        entity.type == "character" and entity.set_personal_logistic_slot or
-        entity.type == "spider-vehicle" and entity.set_vehicle_logistic_slot
-
-    local get_logistic_slot =
-        entity.type == "character" and entity.get_personal_logistic_slot or
-        entity.type == "spider-vehicle" and entity.get_vehicle_logistic_slot
+    local set_logistic_slot, get_logistic_slot = main.get_logistic_slot_functions(entity)
 
     -- Retrieve existing requests.
     local already_requesting = {}
