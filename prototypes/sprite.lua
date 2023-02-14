@@ -34,5 +34,13 @@ data:extend{
         size = 32,
         mipmap_count = 2,
         flags = {"icon"}
+    },
+    {
+        type = "sprite",
+        name = "plt-clear-requests-button",
+        filename = "__personal-logistics-templates__/graphics/icons/clear-requests-button.png",
+        size = 32,
+        mipmap_count = 2,
+        flags = {"icon"}
     }
 }

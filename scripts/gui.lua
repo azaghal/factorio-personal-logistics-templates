@@ -80,6 +80,15 @@ function gui.initialise(player)
             tooltip = {"gui.plt-auto-trash"}
         }
 
+        local clear_requests_button = panel.add{
+            type = "sprite-button",
+            name = "plt_clear_requests_button",
+            style = "shortcut_bar_button_red",
+            visible = false,
+            sprite = "plt-clear-requests-button",
+            tooltip = {"gui.plt-clear-requests"}
+        }
+
         global.player_data[player.index].windows[window_name] = window
     end
 end
@@ -115,12 +124,14 @@ function gui.set_mode(player, mode)
             window.plt_panel.plt_import_button.visible = false
             window.plt_panel.plt_append_button.visible = false
             window.plt_panel.plt_auto_trash_button.visible = false
+            window.plt_panel.plt_clear_requests_button.visible = false
             window.plt_panel.plt_export_button.visible = true
             window.visible = true
         elseif mode == "import" then
             window.plt_panel.plt_import_button.visible = true
             window.plt_panel.plt_append_button.visible = true
             window.plt_panel.plt_auto_trash_button.visible = true
+            window.plt_panel.plt_clear_requests_button.visible = true
             window.plt_panel.plt_export_button.visible = false
             window.visible = true
         end

@@ -7,4 +7,5 @@ Date: 9999-99-99
     - Import and export spidertron personal logistics requests as blueprint templates.
     - Replace and append mode of operation for import.
     - Set trash-all requests (maximum amount of zero) for all currently unrequested items.
+    - Clear all personal logistics requests with a single click.
   Bugfixes:

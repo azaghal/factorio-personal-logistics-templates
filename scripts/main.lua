@@ -455,6 +455,34 @@ function main.auto_trash(player)
 end
 
 
+--- Clears all personal logistic requests.
+--
+-- @param player LuaPlayer Player that has requested clearing of all requests.
+--
+function main.clear_requests_button(player)
+
+    -- Determine what entity is targeted.
+    local entity
+    if player.opened_gui_type == defines.gui_type.controller then
+        entity = player.character
+    elseif player.opened_gui_type == defines.gui_type.entity and player.opened.type == "spider-vehicle" then
+        entity = player.opened
+    else
+        player.print({"error.plt-invalid-clear-attempt"})
+        return
+    end
+
+    -- Determine what functions to use for setting/getting logistic slot information.
+    local set_logistic_slot, get_logistic_slot = main.get_logistic_slot_functions(entity)
+
+    -- Clear all requests.
+    for slot_index = 1, entity.request_slot_count do
+        set_logistic_slot(slot_index, {})
+    end
+
+end
+
+
 --- Registers GUI handlers for the module.
 --
 function main.register_gui_handlers()
@@ -462,6 +490,7 @@ function main.register_gui_handlers()
     gui.register_handler("plt_import_button", main.import)
     gui.register_handler("plt_append_button", main.append)
     gui.register_handler("plt_auto_trash_button", main.auto_trash)
+    gui.register_handler("plt_clear_requests_button", main.clear_requests_button)
 end
 
 
