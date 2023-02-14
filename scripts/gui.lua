@@ -88,6 +88,8 @@ function gui.destroy_player_data(player)
     for _, window in pairs(global.player_data[player.index].windows) do
         window.destroy()
     end
+
+    global.player_data[player.index].windows = nil
 end
 
 
