@@ -74,7 +74,7 @@ function gui.initialise(player)
         local auto_trash_button = panel.add{
             type = "sprite-button",
             name = "plt_auto_trash_button",
-            style = "shortcut_bar_button_blue",
+            style = "shortcut_bar_button_red",
             visible = false,
             sprite = "plt-auto-trash-button",
             tooltip = {"gui.plt-auto-trash"}
@@ -114,7 +114,7 @@ end
 --- Sets mode of operation for GUI, showing or hiding the relevant elements.
 --
 -- @param player LuaPlayer Player for which to set the GUI mode.
--- @param mode string Mode to set. One of: "hidden", "export", "import".
+-- @param mode string Mode to set. One of: "hidden", "export", "import", "modify".
 --
 function gui.set_mode(player, mode)
     for _, window in pairs(global.player_data[player.index].windows) do
@@ -130,6 +130,13 @@ function gui.set_mode(player, mode)
         elseif mode == "import" then
             window.plt_panel.plt_import_button.visible = true
             window.plt_panel.plt_append_button.visible = true
+            window.plt_panel.plt_auto_trash_button.visible = false
+            window.plt_panel.plt_clear_requests_button.visible = false
+            window.plt_panel.plt_export_button.visible = false
+            window.visible = true
+        elseif mode == "modify" then
+            window.plt_panel.plt_import_button.visible = false
+            window.plt_panel.plt_append_button.visible = false
             window.plt_panel.plt_auto_trash_button.visible = true
             window.plt_panel.plt_clear_requests_button.visible = true
             window.plt_panel.plt_export_button.visible = false

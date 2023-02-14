@@ -128,6 +128,8 @@ function main.update_button_visibility(player)
         gui.set_mode(player, "export")
     elseif main.is_valid_template(entities) then
         gui.set_mode(player, "import")
+    elseif player.cursor_stack.is_deconstruction_item then
+        gui.set_mode(player, "modify")
     else
         gui.set_mode(player, "hidden")
     end
