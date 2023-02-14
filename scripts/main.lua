@@ -62,7 +62,9 @@ end
 --- Checks if passed-in list of blueprint entities constitute a valid personal logistics template that can be imported.
 --
 -- @param entities {BlueprintEntity} List of blueprint entities to check.
-
+--
+-- @return bool true if passed-in entities constitute valid personal logistics template, false otherwise.
+--
 function main.is_valid_template(entities)
 
     -- List must contain at least one entity.
@@ -113,6 +115,25 @@ function main.get_logistic_slot_functions(entity)
 end
 
 
+--- Checks if item stack is a blank deconstruction planner.
+--
+-- @param item_stack LuaItemStack Item stack to check.
+--
+-- @return bool true if passted-in item stack is blank deconstruction planner, false otherwise.
+--
+function main.is_blank_deconstruction_planner(item_stack)
+    if item_stack.valid_for_read and
+        item_stack.is_deconstruction_item and
+        table_size(item_stack.entity_filters) == 0 and
+        table_size(item_stack.tile_filters) == 0 then
+
+        return true
+    end
+
+    return false
+end
+
+
 --- Updates visibility of import/export buttons for a given player based on held cursor stack.
 --
 -- @param player LuaPlayer Player for which to update button visibility.
@@ -128,7 +149,7 @@ function main.update_button_visibility(player)
         gui.set_mode(player, "export")
     elseif main.is_valid_template(entities) then
         gui.set_mode(player, "import")
-    elseif player.cursor_stack.is_deconstruction_item then
+    elseif main.is_blank_deconstruction_planner(player.cursor_stack) then
         gui.set_mode(player, "modify")
     else
         gui.set_mode(player, "hidden")

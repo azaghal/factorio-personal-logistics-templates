@@ -27,7 +27,7 @@ Hold a personal logistics requests template (blueprint) while the character or s
 
 ### Auto-trash unrequested items or clear all requests
 
-Hold an empty deconstruction planner while the character or spidertron windows are open, and buttons for more destructive operations will be shown at bottom-left of the window:
+Hold a blank deconstruction planner while the character or spidertron windows are open, and buttons for more destructive operations will be shown at bottom-left of the window:
 
 -   Auto-trash all unrequested items by setting up requests with maximum amount set to zero. These requests are appended at the end, with an extra blank line above them. This is useful when used for construction spidertrons to ensure their main inventory does not get clogged-up with unwanted items (such as stone, wood etc). Blueprints, deconstruction planners, upgrade planners, and blueprint books are always excluded from auto-trashing.
 -   Clear all personal logistics requests. Single-click solution.
