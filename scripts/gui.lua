@@ -71,6 +71,15 @@ function gui.initialise(player)
             tooltip = {"gui.plt-append"}
         }
 
+        local auto_trash_button = panel.add{
+            type = "sprite-button",
+            name = "plt_auto_trash_button",
+            style = "shortcut_bar_button_blue",
+            visible = false,
+            sprite = "plt-auto-trash-template-button",
+            tooltip = {"gui.plt-auto-trash"}
+        }
+
         global.player_data[player.index].windows[window_name] = window
     end
 end
@@ -105,11 +114,13 @@ function gui.set_mode(player, mode)
         elseif mode == "export" then
             window.plt_panel.plt_import_button.visible = false
             window.plt_panel.plt_append_button.visible = false
+            window.plt_panel.plt_auto_trash_button.visible = false
             window.plt_panel.plt_export_button.visible = true
             window.visible = true
         elseif mode == "import" then
             window.plt_panel.plt_import_button.visible = true
             window.plt_panel.plt_append_button.visible = true
+            window.plt_panel.plt_auto_trash_button.visible = true
             window.plt_panel.plt_export_button.visible = false
             window.visible = true
         end

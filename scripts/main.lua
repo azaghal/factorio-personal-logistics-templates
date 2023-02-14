@@ -379,12 +379,78 @@ function main.append(player)
 end
 
 
+--- Sets-up auto-trashing of all currently unrequested items (setting the maximum amount to zero).
+--
+-- This function is primarily useful for working with construction spidertrons to ensure their inventories never get
+-- filled-up.
+--
+-- @param player LuaPlayer Player that has requested the auto-trashing.
+--
+function main.auto_trash(player)
+
+    -- Determine what entity is targeted.
+    local entity
+    if player.opened_gui_type == defines.gui_type.controller then
+        entity = player.character
+    elseif player.opened_gui_type == defines.gui_type.entity and player.opened.type == "spider-vehicle" then
+        entity = player.opened
+    else
+        player.print({"error.plt-invalid-import-attempt"})
+        return
+    end
+
+    -- Determine what functions to use for setting/getting logistic slot information.
+    local set_logistic_slot =
+        entity.type == "character" and entity.set_personal_logistic_slot or
+        entity.type == "spider-vehicle" and entity.set_vehicle_logistic_slot
+
+    local get_logistic_slot =
+        entity.type == "character" and entity.get_personal_logistic_slot or
+        entity.type == "spider-vehicle" and entity.get_vehicle_logistic_slot
+
+    -- Retrieve existing requests.
+    local already_requesting = {}
+    for slot_index = 1, entity.request_slot_count do
+        local slot = get_logistic_slot(slot_index)
+        if slot.name then
+            already_requesting[slot.name] = true
+        end
+    end
+
+    -- Exclude all blueprint and hidden items.
+    local item_prototypes = game.get_filtered_item_prototypes({
+            {filter = "type", type = "blueprint", invert = true},
+            {filter = "type", type = "deconstruction-item", invert = true, mode = "and"},
+            {filter = "type", type = "upgrade-item", invert = true, mode = "and"},
+            {filter = "type", type = "blueprint-book", invert = true, mode = "and"},
+            {filter = "flag", flag = "hidden", invert = true, mode = "and"}
+    })
+
+    -- Append new requests starting at the first free row. Leave one extra row in-between for visual separation.
+    local slot_index = math.ceil(entity.request_slot_count / 10) * 10 + 10 + 1
+
+    for item_name, item_prototype in pairs(item_prototypes) do
+        if not already_requesting[item_name] then
+
+            local slot = {
+                name = item_name,
+                min = 0,
+                max = 0
+            }
+            set_logistic_slot(slot_index, slot)
+            slot_index = slot_index + 1
+        end
+    end
+end
+
+
 --- Registers GUI handlers for the module.
 --
 function main.register_gui_handlers()
     gui.register_handler("plt_export_button", main.export)
     gui.register_handler("plt_import_button", main.import)
     gui.register_handler("plt_append_button", main.append)
+    gui.register_handler("plt_auto_trash_button", main.auto_trash)
 end
 
 

@@ -23,6 +23,7 @@ Hold a personal logistics requests template (blueprint) while the character or s
 
 -   Import held template, _replacing_ all existing personal logistics requests (button with arrow pointing up). Slot layout from the template is preserved.
 -   Append held template, _preserving_ all existing personal logistics requests (button with a plus sign). New requests are appended at the end, starting from a first blank row. This mode is useful for having a modular set of templates that can be combined as desired.
+-   Auto-trash all unrequested items by setting up requests with maximum amount set to zero. These requests are appended at the end, with an extra blank line above them. This is useful when used for construction spidertrons to ensure their main inventory does not get clogged-up with unwanted items (such as stone, wood etc). Blueprints, deconstruction planners, upgrade planners, and blueprint books are always excluded from auto-trashing.
 
 
 ### Template format

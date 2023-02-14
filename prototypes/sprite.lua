@@ -26,5 +26,13 @@ data:extend{
         size = 32,
         mipmap_count = 2,
         flags = {"icon"}
+    },
+    {
+        type = "sprite",
+        name = "plt-auto-trash-template-button",
+        filename = "__personal-logistics-templates__/graphics/icons/auto-trash-template-button.png",
+        size = 32,
+        mipmap_count = 2,
+        flags = {"icon"}
     }
 }
