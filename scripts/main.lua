@@ -30,6 +30,24 @@ function main.initialise_player_data(player)
 end
 
 
+--- Updates global mod data.
+--
+-- @param old_version string Old version of mod.
+-- @param new_version string New version of mod.
+--
+function main.update_data(old_version, new_version)
+
+    -- Ensure the GUI definition is up-to-date for all players.
+    if new_version ~= old_version then
+        for index, player in pairs(game.players) do
+            gui.destroy_player_data(player)
+            gui.initialise(player)
+        end
+    end
+
+end
+
+
 --- Destroys all mod data for a specific player.
 --
 -- @param player LuaPlayer Player for which to destroy the data.

@@ -67,4 +67,17 @@ function handlers.on_gui_click(event)
 end
 
 
+--- Processes mod configuration changes (upgrades).
+--
+-- @param data ConfigurationChangedData Event data as passed-in by the game engine.
+--
+function handlers.on_configuration_changed(data)
+    local personal_logistics_templates_changes = data.mod_changes["personal-logistics-templates"]
+
+    if personal_logistics_templates_changes then
+        main.update_data(personal_logistics_templates_changes.old_version,
+                         personal_logistics_templates_changes.new_version)
+    end
+end
+
 return handlers
