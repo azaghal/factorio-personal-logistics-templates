@@ -315,7 +315,7 @@ function main.export(player)
     elseif player.opened_gui_type == defines.gui_type.entity and player.opened.type == "spider-vehicle" then
         entity = player.opened
     else
-        player.print({"error.plt-invalid-export-attempt"})
+        player.print({"error.plt-invalid-entity"})
         return
     end
 
@@ -352,7 +352,7 @@ function main.import(player)
     elseif player.opened_gui_type == defines.gui_type.entity and player.opened.type == "spider-vehicle" then
         entity = player.opened
     else
-        player.print({"error.plt-invalid-import-attempt"})
+        player.print({"error.plt-invalid-entity"})
         return
     end
 
@@ -372,11 +372,11 @@ function main.import(player)
 end
 
 
---- Appends personal logistics template from a held blueprint, preserving the existing slot configuration.
+--- Add and increment personal logistics requests using the held blueprint.
 --
--- @param player LuaPlayer Player that has requested the import.
+-- @param player LuaPlayer Player that has requested the increment.
 --
-function main.append(player)
+function main.increment(player)
     local entities = player.get_blueprint_entities()
 
     if not main.is_valid_template(entities) then
@@ -391,7 +391,7 @@ function main.append(player)
     elseif player.opened_gui_type == defines.gui_type.entity and player.opened.type == "spider-vehicle" then
         entity = player.opened
     else
-        player.print({"error.plt-invalid-import-attempt"})
+        player.print({"error.plt-invalid-entity"})
         return
     end
 
@@ -403,18 +403,33 @@ function main.append(player)
     for slot_index = 1, entity.request_slot_count do
         local slot = get_logistic_slot(slot_index)
         if slot.name then
-            already_requesting[slot.name] = true
+            slot.index = slot_index
+            already_requesting[slot.name] = slot
         end
     end
 
-    -- Append new requests starting at the first free row.
+    -- Convert constant combinators into personal logistics configuration.
     local slots = main.constant_combinators_to_personal_logistics_configuration(entities)
-    local slot_index = math.ceil(entity.request_slot_count / 10) * 10 + 1
+
+    -- Find first empty row for appending new requests.
+    local empty_slot_index = math.ceil(entity.request_slot_count / 10) * 10 + 1
+
+    -- Process all slots, update existing slots, and append new ones.
     for _, slot in pairs(slots) do
-        if not already_requesting [slot.name] then
-            set_logistic_slot(slot_index, slot)
-            slot_index = slot_index + 1
+        local slot_index
+
+        if already_requesting[slot.name] then
+            slot.min = slot.min + already_requesting[slot.name].min
+            slot.max = slot.max + already_requesting[slot.name].max
+            slot.min = slot.min < 4294967296 and slot.min or 4294967295
+            slot.max = slot.max < 4294967296 and slot.max or 4294967295
+            slot_index = already_requesting[slot.name].index
+        else
+            slot_index = empty_slot_index
+            empty_slot_index = empty_slot_index + 1
         end
+
+        set_logistic_slot(slot_index, slot)
     end
 end
 
@@ -435,7 +450,7 @@ function main.auto_trash(player)
     elseif player.opened_gui_type == defines.gui_type.entity and player.opened.type == "spider-vehicle" then
         entity = player.opened
     else
-        player.print({"error.plt-invalid-auto-trash-attempt"})
+        player.print({"error.plt-invalid-entity"})
         return
     end
 
@@ -491,7 +506,7 @@ function main.clear_requests_button(player)
     elseif player.opened_gui_type == defines.gui_type.entity and player.opened.type == "spider-vehicle" then
         entity = player.opened
     else
-        player.print({"error.plt-invalid-clear-attempt"})
+        player.print({"error.plt-invalid-entity"})
         return
     end
 
@@ -511,7 +526,7 @@ end
 function main.register_gui_handlers()
     gui.register_handler("plt_export_button", main.export)
     gui.register_handler("plt_import_button", main.import)
-    gui.register_handler("plt_append_button", main.append)
+    gui.register_handler("plt_increment_button", main.increment)
     gui.register_handler("plt_auto_trash_button", main.auto_trash)
     gui.register_handler("plt_clear_requests_button", main.clear_requests_button)
 end

@@ -21,8 +21,8 @@ data:extend{
     },
     {
         type = "sprite",
-        name = "plt-append-template-button",
-        filename = "__personal-logistics-templates__/graphics/icons/append-template-button.png",
+        name = "plt-increment-requests-button",
+        filename = "__personal-logistics-templates__/graphics/icons/increment-requests-button.png",
         size = 32,
         mipmap_count = 2,
         flags = {"icon"}
