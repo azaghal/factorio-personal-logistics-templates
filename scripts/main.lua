@@ -158,6 +158,29 @@ function main.update_button_visibility(player)
 end
 
 
+--- Determines what entity the current GUI is opened for.
+--
+-- In case of an invalid entity, an error message is shown to the player.
+--
+-- @param LuaPlayer Player to check the opened GUI for.
+--
+-- @return LuaEntity|nil Entity for which the current GUI is opened for, or nil in case of unsupported entity.
+--
+function main.get_opened_gui_entity(player)
+
+    if player.opened_gui_type == defines.gui_type.controller then
+        entity = player.character
+    elseif player.opened_gui_type == defines.gui_type.entity and player.opened.type == "spider-vehicle" then
+        entity = player.opened
+    else
+        player.print({"error.plt-invalid-entity"})
+        entity = nil
+    end
+
+    return entity
+end
+
+
 --- Converts personal logistics configuration into list of (blueprint entity) constant combinators.
 --
 -- Each row of personal logistics configuration is represented as a single constant combinator in the resulting
@@ -309,13 +332,8 @@ function main.export(player)
     end
 
     -- Determine what entity is targeted.
-    local entity
-    if player.opened_gui_type == defines.gui_type.controller then
-        entity = player.character
-    elseif player.opened_gui_type == defines.gui_type.entity and player.opened.type == "spider-vehicle" then
-        entity = player.opened
-    else
-        player.print({"error.plt-invalid-entity"})
+    local entity = main.get_opened_gui_entity(player)
+    if not entity then
         return
     end
 
@@ -346,13 +364,8 @@ function main.import(player)
     end
 
     -- Determine what entity is targeted.
-    local entity
-    if player.opened_gui_type == defines.gui_type.controller then
-        entity = player.character
-    elseif player.opened_gui_type == defines.gui_type.entity and player.opened.type == "spider-vehicle" then
-        entity = player.opened
-    else
-        player.print({"error.plt-invalid-entity"})
+    local entity = main.get_opened_gui_entity(player)
+    if not entity then
         return
     end
 
@@ -385,13 +398,8 @@ function main.increment(player)
     end
 
     -- Determine what entity is targeted.
-    local entity
-    if player.opened_gui_type == defines.gui_type.controller then
-        entity = player.character
-    elseif player.opened_gui_type == defines.gui_type.entity and player.opened.type == "spider-vehicle" then
-        entity = player.opened
-    else
-        player.print({"error.plt-invalid-entity"})
+    local entity = main.get_opened_gui_entity(player)
+    if not entity then
         return
     end
 
@@ -444,13 +452,8 @@ end
 function main.auto_trash(player)
 
     -- Determine what entity is targeted.
-    local entity
-    if player.opened_gui_type == defines.gui_type.controller then
-        entity = player.character
-    elseif player.opened_gui_type == defines.gui_type.entity and player.opened.type == "spider-vehicle" then
-        entity = player.opened
-    else
-        player.print({"error.plt-invalid-entity"})
+    local entity = main.get_opened_gui_entity(player)
+    if not entity then
         return
     end
 
@@ -500,13 +503,8 @@ end
 function main.clear_requests_button(player)
 
     -- Determine what entity is targeted.
-    local entity
-    if player.opened_gui_type == defines.gui_type.controller then
-        entity = player.character
-    elseif player.opened_gui_type == defines.gui_type.entity and player.opened.type == "spider-vehicle" then
-        entity = player.opened
-    else
-        player.print({"error.plt-invalid-entity"})
+    local entity = main.get_opened_gui_entity(player)
+    if not entity then
         return
     end
 
