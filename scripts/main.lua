@@ -143,7 +143,7 @@ function main.update_button_visibility(player)
     -- Retrieve list of blueprint entities.
     local entities = player.get_blueprint_entities() or {}
 
-    if not player.character then
+    if not player.character or not player.force.character_logistic_requests then
         gui.set_mode(player, "hidden")
     elseif table_size(entities) == 0 and player.is_cursor_blueprint() and player.cursor_stack.valid_for_read then
         gui.set_mode(player, "export")

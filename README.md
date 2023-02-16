@@ -11,6 +11,8 @@ About
 Features
 --------
 
+Character logistics requests technology effect must be researched prior to using any of the listed features - otherwise none of the buttons will be shown to the player.
+
 
 ### Create templates
 
