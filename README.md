@@ -26,6 +26,7 @@ Hold a personal logistics requests template (blueprint) while the character or s
 -   Import held template, _replacing all existing_ personal logistics requests (button with arrow pointing up). Slot layout from the template is preserved.
 -   Increment requests using held template, _adding to existing and appending new_ personal logistics requests (button with a plus sign). New requests are appended at the end, starting from a first blank row. Slot layout from the template is not preserved. This mode is useful for increasing the amounts of existing requested items.
 -   Decrement requests using held template, _substracting from existing_ personal logistics requests (button with a minus sign). If request minimum is already zero, and maximum would be decreased to zero as well, the request is cleared. This mode is useful for decreasing the amounts of existing requested items.
+-   Set requests using held template, _adding new and overwriting existing_ personal logistics requests (button with plus/minus sign). New requests are appended at the end, starting from a first blank row. Slot layout from the template is not preserved. This mode is useful for combining modular set of templates and reseting to default template request values.
 
 
 ### Auto-trash unrequested items or clear all requests
@@ -91,3 +92,4 @@ All code, documentation, and assets implemented as part of this mod are released
 -   `graphics/icons/export-template-button.png`, which is a derivative based on Factorio game assets as provided by *Wube Software Ltd*. For details, see [Factorio Terms of Service](https://www.factorio.com/terms-of-service).
 -   `graphics/icons/import-template-button.png`, which is a derivative based on Factorio game assets as provided by *Wube Software Ltd*. For details, see [Factorio Terms of Service](https://www.factorio.com/terms-of-service).
 -   `graphics/icons/increment-requests-button.png`, which is a derivative based on Factorio game assets as provided by *Wube Software Ltd*. For details, see [Factorio Terms of Service](https://www.factorio.com/terms-of-service).
+-   `graphics/icons/set-requests-button.png`, which is a derivative based on Factorio game assets as provided by *Wube Software Ltd*. For details, see [Factorio Terms of Service](https://www.factorio.com/terms-of-service).

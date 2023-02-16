@@ -518,6 +518,59 @@ function main.decrement(player)
 end
 
 
+--- Set logistics requests using the held blueprint.
+--
+-- @param player LuaPlayer Player that has requested the setting of requests.
+--
+function main.set(player)
+    local entities = player.get_blueprint_entities()
+
+    if not main.is_valid_template(entities) then
+        player.print({"error.plt-invalid-template"})
+        return
+    end
+
+    -- Determine what entity is targeted.
+    local entity = main.get_opened_gui_entity(player)
+    if not entity then
+        return
+    end
+
+    -- Determine what functions to use for setting/getting logistic slot information.
+    local set_logistic_slot, get_logistic_slot = main.get_logistic_slot_functions(entity)
+
+    -- Retrieve existing requests.
+    local already_requesting = {}
+    for slot_index = 1, entity.request_slot_count do
+        local slot = get_logistic_slot(slot_index)
+        if slot.name then
+            slot.index = slot_index
+            already_requesting[slot.name] = slot
+        end
+    end
+
+    -- Convert constant combinators into personal logistics configuration.
+    local slots = main.constant_combinators_to_personal_logistics_configuration(entities)
+
+    -- Find first empty row for appending new requests.
+    local empty_slot_index = math.ceil(entity.request_slot_count / 10) * 10 + 1
+
+    -- Process all slots, update existing slots, and append new ones.
+    for _, slot in pairs(slots) do
+        local slot_index
+
+        if already_requesting[slot.name] then
+            slot_index = already_requesting[slot.name].index
+        else
+            slot_index = empty_slot_index
+            empty_slot_index = empty_slot_index + 1
+        end
+
+        set_logistic_slot(slot_index, slot)
+    end
+end
+
+
 --- Sets-up auto-trashing of all currently unrequested items (setting the maximum amount to zero).
 --
 -- This function is primarily useful for working with construction spidertrons to ensure their inventories never get
@@ -602,6 +655,7 @@ function main.register_gui_handlers()
     gui.register_handler("plt_import_button", main.import)
     gui.register_handler("plt_increment_button", main.increment)
     gui.register_handler("plt_decrement_button", main.decrement)
+    gui.register_handler("plt_set_button", main.set)
     gui.register_handler("plt_auto_trash_button", main.auto_trash)
     gui.register_handler("plt_clear_requests_button", main.clear_requests_button)
 end

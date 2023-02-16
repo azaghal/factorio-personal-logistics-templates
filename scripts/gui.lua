@@ -84,6 +84,16 @@ function gui.initialise(player)
             tags = { mode = "import" }
         }
 
+        local set_button = panel.add{
+            type = "sprite-button",
+            name = "plt_set_button",
+            style = "shortcut_bar_button_blue",
+            visible = false,
+            sprite = "plt-set-requests-button",
+            tooltip = {"gui.plt-set"},
+            tags = { mode = "import" }
+        }
+
         local auto_trash_button = panel.add{
             type = "sprite-button",
             name = "plt_auto_trash_button",
