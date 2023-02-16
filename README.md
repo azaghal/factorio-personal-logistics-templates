@@ -22,7 +22,8 @@ Hold an empty blueprint while the character or spidetron windows are open, and a
 Hold a personal logistics requests template (blueprint) while the character or spidetron windows are open, and import buttons will be shown at bottom-left of the window. Buttons are shown _only_ when valid personal logistics template blueprints are held. Each button provides different mode of operation:
 
 -   Import held template, _replacing all existing_ personal logistics requests (button with arrow pointing up). Slot layout from the template is preserved.
--   Add held template, _adding to existing_ personal logistics requests (button with a plus sign). New requests are appended at the end, starting from a first blank row. Slot layout from the template is not preserved. This mode is useful for increasing the amounts of existing requested items.
+-   Increment requests using held template, _adding to existing and appending new_ personal logistics requests (button with a plus sign). New requests are appended at the end, starting from a first blank row. Slot layout from the template is not preserved. This mode is useful for increasing the amounts of existing requested items.
+-   Decrement requests using held template, _substracting from existing_ personal logistics requests (button with a minus sign). If request minimum is already zero, and maximum would be decreased to zero as well, the request is cleared. This mode is useful for decreasing the amounts of existing requested items.
 
 
 ### Auto-trash unrequested items or clear all requests

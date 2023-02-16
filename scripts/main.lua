@@ -442,6 +442,82 @@ function main.increment(player)
 end
 
 
+--- Decrement personal logistics requests using the held blueprint.
+--
+-- @param player LuaPlayer Player that has requested the decrement.
+--
+function main.decrement(player)
+    local entities = player.get_blueprint_entities()
+
+    if not main.is_valid_template(entities) then
+        player.print({"error.plt-invalid-template"})
+        return
+    end
+
+    -- Determine what entity is targeted.
+    local entity = main.get_opened_gui_entity(player)
+    if not entity then
+        return
+    end
+
+    -- Determine what functions to use for setting/getting logistic slot information.
+    local set_logistic_slot, get_logistic_slot = main.get_logistic_slot_functions(entity)
+
+    -- Retrieve existing requests.
+    local already_requesting = {}
+    for slot_index = 1, entity.request_slot_count do
+        local slot = get_logistic_slot(slot_index)
+        if slot.name then
+            slot.index = slot_index
+            already_requesting[slot.name] = slot
+        end
+    end
+
+    -- Convert constant combinators into personal logistics configuration.
+    local slots = main.constant_combinators_to_personal_logistics_configuration(entities)
+
+    -- Process all slots, decrementing the requested minimum/maximum quantities.
+    for _, slot in pairs(slots) do
+
+        if already_requesting[slot.name] then
+
+            -- Clear the request slot if minimum is already at zero, and new maximum would end-up being zero as well
+            -- (this makes more sense from player's perspective). Otherwise keep the slot, but with decremented values.
+            if already_requesting[slot.name].min == 0 and slot.max >= already_requesting[slot.name].max then
+
+                set_logistic_slot(already_requesting[slot.name].index, {})
+
+            else
+
+                -- Decrement minimum first. It must be greater than zero.
+                slot.min = already_requesting[slot.name].min - slot.min
+                slot.min = slot.min > 0 and slot.min or 0
+
+                -- Decrementing maximum is more complex.  4294967295 corresponds to infinity. We apply the following logic:
+                --
+                --   1. (infinity - infinity) = infinity
+                --   2. (infinity - finite) = infinity
+                --   3. (finite - finite) = finite (perform substraction)
+                slot.max =
+                    already_requesting[slot.name].max == 4294967295 and slot.max == 4294967295 and 4294967295 or
+                    already_requesting[slot.name].max == 4294967295 and 4294967295 or
+                    already_requesting[slot.name].max - slot.max 
+
+                -- Maximum must be greater or equal to minimum.
+                slot.max =
+                    slot.min > slot.max and slot.min or
+                    slot.max
+
+                set_logistic_slot(already_requesting[slot.name].index, slot)
+
+            end
+
+        end
+
+    end
+end
+
+
 --- Sets-up auto-trashing of all currently unrequested items (setting the maximum amount to zero).
 --
 -- This function is primarily useful for working with construction spidertrons to ensure their inventories never get
@@ -525,6 +601,7 @@ function main.register_gui_handlers()
     gui.register_handler("plt_export_button", main.export)
     gui.register_handler("plt_import_button", main.import)
     gui.register_handler("plt_increment_button", main.increment)
+    gui.register_handler("plt_decrement_button", main.decrement)
     gui.register_handler("plt_auto_trash_button", main.auto_trash)
     gui.register_handler("plt_clear_requests_button", main.clear_requests_button)
 end

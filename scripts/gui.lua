@@ -71,6 +71,15 @@ function gui.initialise(player)
             tooltip = {"gui.plt-increment"}
         }
 
+        local decrement_button = panel.add{
+            type = "sprite-button",
+            name = "plt_decrement_button",
+            style = "shortcut_bar_button_blue",
+            visible = false,
+            sprite = "plt-decrement-requests-button",
+            tooltip = {"gui.plt-decrement"}
+        }
+
         local auto_trash_button = panel.add{
             type = "sprite-button",
             name = "plt_auto_trash_button",
@@ -123,6 +132,7 @@ function gui.set_mode(player, mode)
         elseif mode == "export" then
             window.plt_panel.plt_import_button.visible = false
             window.plt_panel.plt_increment_button.visible = false
+            window.plt_panel.plt_decrement_button.visible = fales
             window.plt_panel.plt_auto_trash_button.visible = false
             window.plt_panel.plt_clear_requests_button.visible = false
             window.plt_panel.plt_export_button.visible = true
@@ -130,6 +140,7 @@ function gui.set_mode(player, mode)
         elseif mode == "import" then
             window.plt_panel.plt_import_button.visible = true
             window.plt_panel.plt_increment_button.visible = true
+            window.plt_panel.plt_decrement_button.visible = true
             window.plt_panel.plt_auto_trash_button.visible = false
             window.plt_panel.plt_clear_requests_button.visible = false
             window.plt_panel.plt_export_button.visible = false
@@ -137,6 +148,7 @@ function gui.set_mode(player, mode)
         elseif mode == "modify" then
             window.plt_panel.plt_import_button.visible = false
             window.plt_panel.plt_increment_button.visible = false
+            window.plt_panel.plt_decrement_button.visible = false
             window.plt_panel.plt_auto_trash_button.visible = true
             window.plt_panel.plt_clear_requests_button.visible = true
             window.plt_panel.plt_export_button.visible = false

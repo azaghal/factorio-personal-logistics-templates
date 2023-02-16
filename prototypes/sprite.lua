@@ -29,6 +29,14 @@ data:extend{
     },
     {
         type = "sprite",
+        name = "plt-decrement-requests-button",
+        filename = "__personal-logistics-templates__/graphics/icons/decrement-requests-button.png",
+        size = 32,
+        mipmap_count = 2,
+        flags = {"icon"}
+    },
+    {
+        type = "sprite",
         name = "plt-auto-trash-button",
         filename = "__personal-logistics-templates__/graphics/icons/auto-trash-button.png",
         size = 32,
