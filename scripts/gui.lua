@@ -50,7 +50,8 @@ function gui.initialise(player)
             style = "shortcut_bar_button_blue",
             visible = false,
             sprite = "plt-export-template-button",
-            tooltip = {"gui.plt-export"}
+            tooltip = {"gui.plt-export"},
+            tags = { mode = "export" }
         }
 
         local import_button = panel.add{
@@ -59,7 +60,8 @@ function gui.initialise(player)
             style = "shortcut_bar_button_blue",
             visible = false,
             sprite = "plt-import-template-button",
-            tooltip = {"gui.plt-import"}
+            tooltip = {"gui.plt-import"},
+            tags = { mode = "import" }
         }
 
         local increment_button = panel.add{
@@ -68,7 +70,8 @@ function gui.initialise(player)
             style = "shortcut_bar_button_blue",
             visible = false,
             sprite = "plt-increment-requests-button",
-            tooltip = {"gui.plt-increment"}
+            tooltip = {"gui.plt-increment"},
+            tags = { mode = "import" }
         }
 
         local decrement_button = panel.add{
@@ -77,7 +80,8 @@ function gui.initialise(player)
             style = "shortcut_bar_button_blue",
             visible = false,
             sprite = "plt-decrement-requests-button",
-            tooltip = {"gui.plt-decrement"}
+            tooltip = {"gui.plt-decrement"},
+            tags = { mode = "import" }
         }
 
         local auto_trash_button = panel.add{
@@ -86,7 +90,8 @@ function gui.initialise(player)
             style = "shortcut_bar_button_red",
             visible = false,
             sprite = "plt-auto-trash-button",
-            tooltip = {"gui.plt-auto-trash"}
+            tooltip = {"gui.plt-auto-trash"},
+            tags = { mode = "modify" }
         }
 
         local clear_requests_button = panel.add{
@@ -95,7 +100,8 @@ function gui.initialise(player)
             style = "shortcut_bar_button_red",
             visible = false,
             sprite = "plt-clear-requests-button",
-            tooltip = {"gui.plt-clear-requests"}
+            tooltip = {"gui.plt-clear-requests"},
+            tags = { mode = "modify" }
         }
 
         global.player_data[player.index].windows[window_name] = window
@@ -127,32 +133,24 @@ end
 --
 function gui.set_mode(player, mode)
     for _, window in pairs(global.player_data[player.index].windows) do
+
         if mode == "hidden" then
+
             window.visible = false
-        elseif mode == "export" then
-            window.plt_panel.plt_import_button.visible = false
-            window.plt_panel.plt_increment_button.visible = false
-            window.plt_panel.plt_decrement_button.visible = fales
-            window.plt_panel.plt_auto_trash_button.visible = false
-            window.plt_panel.plt_clear_requests_button.visible = false
-            window.plt_panel.plt_export_button.visible = true
+
+        else
+
+            -- Show all buttons with matching mode.
+            for _, button in pairs(window.plt_panel.children) do
+                if button.tags.mode == mode then
+                    button.visible = true
+                else
+                    button.visible = false
+                end
+            end
+
             window.visible = true
-        elseif mode == "import" then
-            window.plt_panel.plt_import_button.visible = true
-            window.plt_panel.plt_increment_button.visible = true
-            window.plt_panel.plt_decrement_button.visible = true
-            window.plt_panel.plt_auto_trash_button.visible = false
-            window.plt_panel.plt_clear_requests_button.visible = false
-            window.plt_panel.plt_export_button.visible = false
-            window.visible = true
-        elseif mode == "modify" then
-            window.plt_panel.plt_import_button.visible = false
-            window.plt_panel.plt_increment_button.visible = false
-            window.plt_panel.plt_decrement_button.visible = false
-            window.plt_panel.plt_auto_trash_button.visible = true
-            window.plt_panel.plt_clear_requests_button.visible = true
-            window.plt_panel.plt_export_button.visible = false
-            window.visible = true
+
         end
     end
 end
