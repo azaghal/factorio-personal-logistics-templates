@@ -44,9 +44,9 @@ Valid personal logistics requests blueprints contain only constant combinators, 
 
 Each constant combinator represents a single line of slots in the personal logistics requests configuration. Constant combinators are laid-out in columns of up to ten, and each column is read from left to right. For example:
 
-- Constant combinator in first column, first row corresponds to first row of personal logistics requests slots.
-- Constant combinator in first column, second row corresponds to second row of personal logistics requests slots.
-- Constant combinator in second column, first row corresponds to eleventh row of personal logistics requests slots.
+-   Constant combinator in first column, first row corresponds to first row of personal logistics requests slots.
+-   Constant combinator in first column, second row corresponds to second row of personal logistics requests slots.
+-   Constant combinator in second column, first row corresponds to eleventh row of personal logistics requests slots.
 
 In an individual constant combinator, the top ten signals correspond to minimum values, while bottom ten signals correspond to maximum values for a particular item request slot (in a single row). The item type for top and bottom slot in a column must match.
 
