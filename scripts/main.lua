@@ -607,11 +607,26 @@ function main.auto_trash(player)
             {filter = "flag", flag = "hidden", invert = true, mode = "and"}
     })
 
-    -- Append new requests starting at the first free row. Leave one extra row in-between for visual separation.
-    local slot_index = math.ceil(entity.request_slot_count / 10) * 10 + 10 + 1
+    -- Retrieve information about the existing auto-trash requests.
+    local auto_trash_info = main.get_auto_trash_info(entity)
 
+    -- Keep track of slot index where request should be added. Setting this to zero ensures we can compare it later on
+    -- against auto_trash_info.append in the loop.
+    local slot_index = 0
+
+    -- Populate auto-trash slots.
     for item_name, item_prototype in pairs(item_prototypes) do
+
         if not already_requesting[item_name] then
+
+            -- Grab first gap in auto-trash slots (if any).
+            local slot_gap = table.remove(auto_trash_info.gaps, 1)
+
+            -- Try to populate auto-trash slot gaps first, then start appending at the end.
+            slot_index =
+                slot_gap ~= nil and slot_gap or
+                slot_index < auto_trash_info.append and auto_trash_info.append or
+                slot_index + 1
 
             local slot = {
                 name = item_name,
@@ -619,9 +634,148 @@ function main.auto_trash(player)
                 max = 0
             }
             set_logistic_slot(slot_index, slot)
-            slot_index = slot_index + 1
+
         end
+
     end
+
+end
+
+
+--- Retrieves information about auto-trash requests in entity's personal logistics requests.
+--
+-- Function can be used even in situations where no auto-trash requests are defined - this way it is easy to determine
+-- where to start adding new ones.
+--
+-- Returned information covers:
+--
+--   - Index of slot where the auto-trash requests begin at (always beginning of the row).
+--   - First available slot index that can be used for appending new auto-trash requests.
+--   - List of empty slot indices corresponding to gaps in auto-trash slot layout.
+--   - Mapping between slot indices and request parameters.
+--   - Mapping between requested item names and request parameters.
+--
+-- @param entity LuaEntity Entity for which to fetch the information.
+--
+-- @return { from = int, append = int, gaps = { int }, slots = { int = LogisticParameters }, items = { string = LogisticParameters  } }
+--
+function main.get_auto_trash_info(entity)
+
+    -- Set-up structure for storing information.
+    local auto_trash_info = {
+        from = nil,
+        append = nil,
+        gaps = {},
+        slots = {},
+        items = {}
+    }
+
+    -- Bail-out early if not a single request is set. Leave the first two rows blank.
+    if entity.request_slot_count == 0 then
+
+        -- Leave two blank rows, no requests are set whatsoever.
+        auto_trash_info.from = 21
+        auto_trash_info.append = 21
+
+        return auto_trash_info
+
+    end
+
+    -- Determine getter function for logistic slot information.
+    local _, get_logistic_slot = main.get_logistic_slot_functions(entity)
+
+    -- Keep track of previous and current row type.
+    local row_type, previous_row_type
+
+    -- Assume that there are no auto-trash requests set. Leave a gap of two blank rows after the final request.
+    auto_trash_info.from = entity.request_slot_count - entity.request_slot_count % 10 + 31
+
+    -- Iterate personal logistics requests back-to-front.
+    for slot_index = entity.request_slot_count, 1, -1 do
+
+        -- Fetch the slot and determine its type.
+        local slot = get_logistic_slot(slot_index)
+        local slot_type =
+            slot.name == nil and "blank" or
+            slot.min == 0 and slot.max == 0 and "trash" or
+            "regular"
+
+        -- Drop out of the loop the moment we hit the first regular request.
+        if slot_type == "regular" then
+            break
+        end
+
+        -- Row type is based on most significant slot type in the row (regular > trash > blank). Row type can never be
+        -- regular at this point because we bail-out from the loop the moment we hit a regular request.
+        row_type =
+            (row_type == "trash" or slot_type == "trash") and "trash" or
+            slot_type
+
+        -- Detect when a whole row has been read.
+        if slot_index % 10 == 1 then
+
+            -- Auto-trash requests are always separated by at least one blank row from regular requests. Every time a
+            -- blank row has bin hit, the auto-trash starting point is updated. Previous row is checked in order to try
+            -- to leave two blank rows in-between regular and auto-trash requests (if possible).
+            if row_type == "blank" and previous_row_type == "blank" then
+                auto_trash_info.from = slot_index + 20
+            elseif row_type == "blank" then
+                auto_trash_info.from = slot_index + 10
+            end
+
+            -- Reset row types for next iteration.
+            previous_row_type = row_type
+            row_type = nil
+        end
+
+    end
+
+    -- Figure out slot index where new auto-trash requests can be added at.
+    auto_trash_info.append =
+        auto_trash_info.from > entity.request_slot_count and auto_trash_info.from or
+        entity.request_slot_count + 1
+
+    -- Now that we know where the auto-trash requests begin, extract information for all of them.
+    for slot_index = auto_trash_info.from, entity.request_slot_count do
+
+        local slot = get_logistic_slot(slot_index)
+
+        if slot.name then
+            auto_trash_info.slots[slot_index] = slot
+            auto_trash_info.items[slot.name] = slot
+        else
+            table.insert(auto_trash_info.gaps, slot_index)
+        end
+
+    end
+
+    return auto_trash_info
+end
+
+
+--- Clears all auto-trash personal logistics requests.
+--
+-- @param player LuaPlayer Player that has requested clearing of all auto-trash requests.
+--
+function main.clear_auto_trash(player)
+
+    -- Determine what entity is targeted.
+    local entity = main.get_opened_gui_entity(player)
+    if not entity then
+        return
+    end
+
+    -- Determine what function to use for setting logistic slot information.
+    local set_logistic_slot, _ = main.get_logistic_slot_functions(entity)
+
+    -- Fetch information about auto-trash slots.
+    local auto_trash_info = main.get_auto_trash_info(entity)
+
+    -- Clear auto-trash slots.
+    for slot_index, _ in pairs(auto_trash_info.slots) do
+       set_logistic_slot(slot_index, { name=nil } )
+    end
+
 end
 
 
@@ -657,6 +811,7 @@ function main.register_gui_handlers()
     gui.register_handler("plt_decrement_button", main.decrement)
     gui.register_handler("plt_set_button", main.set)
     gui.register_handler("plt_auto_trash_button", main.auto_trash)
+    gui.register_handler("plt_clear_auto_trash_button", main.clear_auto_trash)
     gui.register_handler("plt_clear_requests_button", main.clear_requests_button)
 end
 

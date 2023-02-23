@@ -33,7 +33,8 @@ Hold a personal logistics requests template (blueprint) while the character or s
 
 Hold a blank deconstruction planner while the character or spidertron windows are open, and buttons for more destructive operations will be shown at bottom-left of the window:
 
--   Auto-trash all unrequested items by setting up requests with maximum amount set to zero. These requests are appended at the end, with an extra blank line above them. This is useful when used for construction spidertrons to ensure their main inventory does not get clogged-up with unwanted items (such as stone, wood etc). Blueprints, deconstruction planners, upgrade planners, and blueprint books are always excluded from auto-trashing.
+-   Auto-trash all unrequested items by setting up requests with maximum amount set to zero (button with filled-in trash can). This is useful when used for construction spidertrons to ensure their main inventory does not get clogged-up with unwanted items (such as stone, wood etc). Blueprints, deconstruction planners, upgrade planners, and blueprint books are always excluded from auto-trashing. Auto-trash requests are separated from regular requests by two (if possible) or one (at minimum) blank rows of requests.
+-   Clear auto-trash personal logistics requests (button with empty trash can).
 -   Clear all personal logistics requests. Single-click solution.
 
 
@@ -50,12 +51,6 @@ Each constant combinator represents a single line of slots in the personal logis
 In an individual constant combinator, the top ten signals correspond to minimum values, while bottom ten signals correspond to maximum values for a particular item request slot (in a single row). The item type for top and bottom slot in a column must match.
 
 Since constant combinators use _signed_ 32-bit integers, and personal logistics slots use _unsigned_ 32-bit integers, overflowing values are stored as negative values, with -1 corresponding to 2147483648, and -2147483648 corresponding to 4294967296. The 4294967296 (-2147483648) value specifically corresponds to infinte amount in a personal logistics request.
-
-
-Tips and tricks
----------------
-
--   Create an empty template blueprint, and use it to reset all personal logistics requests when needed.
 
 
 Known issues

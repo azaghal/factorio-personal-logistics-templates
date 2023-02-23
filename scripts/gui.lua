@@ -104,6 +104,16 @@ function gui.initialise(player)
             tags = { mode = "modify" }
         }
 
+        local clear_auto_trash_button = panel.add{
+            type = "sprite-button",
+            name = "plt_clear_auto_trash_button",
+            style = "shortcut_bar_button_red",
+            visible = false,
+            sprite = "plt-clear-auto-trash-button",
+            tooltip = {"gui.plt-clear-auto-trash"},
+            tags = { mode = "modify" }
+        }
+
         local clear_requests_button = panel.add{
             type = "sprite-button",
             name = "plt_clear_requests_button",
