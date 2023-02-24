@@ -23,20 +23,20 @@ Hold an empty blueprint while the character or spidetron windows are open, and a
 
 Hold a personal logistics requests template (blueprint) while the character or spidetron windows are open, and import buttons will be shown at bottom-left of the window. Buttons are shown _only_ when valid personal logistics template blueprints are held. Each button provides different mode of operation:
 
--   Import held template, _replacing all existing_ personal logistics requests (button with arrow pointing up). Slot layout from the template is preserved.
--   Append held template,  _appending and replacing_ logistics requests (button with circled plus sign). Slot layout from the template is preserved.
+-   Import held template, _replacing all existing_ personal logistics requests (button with an arrow pointing up). Slot layout from the template is preserved.
+-   Append held template,  _appending and replacing_ logistics requests (button with a circled plus sign). Slot layout from the template is preserved.
+-   Set requests using held template, _adding new and overwriting existing_ personal logistics requests (button with an equals sign). New requests are appended at the end, starting from a first blank row. Slot layout from the template is not preserved. This mode is useful for combining modular set of templates and reseting to default template request values.
 -   Increment requests using held template, _adding to existing and appending new_ personal logistics requests (button with a plus sign). New requests are appended at the end, starting from a first blank row. Slot layout from the template is not preserved. This mode is useful for increasing the amounts of existing requested items.
 -   Decrement requests using held template, _substracting from existing_ personal logistics requests (button with a minus sign). If request minimum is already zero, and maximum would be decreased to zero as well, the request is cleared. This mode is useful for decreasing the amounts of existing requested items.
--   Set requests using held template, _adding new and overwriting existing_ personal logistics requests (button with plus/minus sign). New requests are appended at the end, starting from a first blank row. Slot layout from the template is not preserved. This mode is useful for combining modular set of templates and reseting to default template request values.
 
 
 ### Auto-trash unrequested items or clear all requests
 
 Hold a blank deconstruction planner while the character or spidertron windows are open, and buttons for more destructive operations will be shown at bottom-left of the window:
 
--   Auto-trash all unrequested items by setting up requests with maximum amount set to zero (button with filled-in trash can). This is useful when used for construction spidertrons to ensure their main inventory does not get clogged-up with unwanted items (such as stone, wood etc). Blueprints, deconstruction planners, upgrade planners, and blueprint books are always excluded from auto-trashing. Auto-trash requests are separated from regular requests by two (if possible) or one (at minimum) blank rows of requests.
--   Clear auto-trash personal logistics requests (button with empty trash can).
--   Clear all personal logistics requests. Single-click solution.
+-   Auto-trash all unrequested items by setting up requests with maximum amount set to zero (button with a filled-in trash can). This is useful when used for construction spidertrons to ensure their main inventory does not get clogged-up with unwanted items (such as stone, wood etc). Blueprints, deconstruction planners, upgrade planners, and blueprint books are always excluded from auto-trashing. Auto-trash requests are separated from regular requests by two (if possible) or one (at minimum) blank rows of requests.
+-   Clear auto-trash personal logistics requests (button with an empty trash can).
+-   Clear all personal logistics requests (button with a crossed-out circle). Single-click solution.
 
 
 ### Template format
