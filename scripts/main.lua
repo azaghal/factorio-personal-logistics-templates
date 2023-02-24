@@ -59,7 +59,7 @@ function main.destroy_player_data(player)
 end
 
 
---- Checks if passed-in list of blueprint entities constitute a valid personal logistics template that can be imported.
+--- Checks if passed-in list of blueprint entities constitutes a valid personal logistics template that can be imported.
 --
 -- @param entities {BlueprintEntity} List of blueprint entities to check.
 --
@@ -78,12 +78,37 @@ function main.is_valid_template(entities)
             return false
         end
 
-        -- All constant combinator filters must specify an item.
-        for _, filter in pairs(entity.control_behavior and entity.control_behavior.filters or {}) do
-            if filter.signal.type ~= "item" then
+        -- Control behaviour must contain two filters exactly (if any are set).
+        if entity.control_behavior and entity.control_behavior.filters and table_size(entity.control_behavior.filters) ~= 2 then
+            return false
+        end
+
+        -- Check the content of each individual combinator.
+        if entity.control_behavior and entity.control_behavior.filters then
+            local minimum_filter, maximum_filter = entity.control_behavior.filters[1], entity.control_behavior.filters[2]
+
+            -- Swap the minimum/maximum filters around based on the position in combinator.
+            if minimum_filter.index > maximum_filter.index then
+                minimum_filter, maximum_filter = maximum_filter, minimum_filter
+            end
+
+            -- Filters must occupy correct positions.
+            if minimum_filter.index ~= 1 or maximum_filter.index ~= 11 then
                 return false
             end
+
+            -- Signal type for both filters must be correct.
+            if minimum_filter.signal.type ~= "item" or maximum_filter.signal.type ~= "item" then
+                return false
+            end
+
+            -- Signal names of both filters must match.
+            if minimum_filter.signal.name ~= maximum_filter.signal.name then
+                return false
+            end
+
         end
+
     end
 
     return true
@@ -183,34 +208,32 @@ end
 
 --- Converts personal logistics configuration into list of (blueprint entity) constant combinators.
 --
--- Each row of personal logistics configuration is represented as a single constant combinator in the resulting
--- list. Top row of constant combinator filters is used for minimum quantities, while bottom represents maximum
--- quantities. Filter icons are used to represent item in the slot.
+-- Each slot of personal logistics configuration is represented by a single constant combinator in the resulting list.
+--
+-- Minimum and maximum quantities are kept in the first slot of first and second row (respectively). Filter icons are
+-- used to represent the requested item.
 --
 -- Since combinators use _signed_ 32-bit integers, and personal logistics slots use _unsigned_ 32-bit integers,
 -- overflowing values are stored as negative values, with -1 corresponding to 2147483648, and -2147483648 corresponding
 -- to 4294967296.
 --
--- @param entity LuaEntity Entity for which to generate the list of blueprint entities. Must be character or spidetron.
+-- @param entity LuaEntity Entity for which to generate the list of blueprint entities.
 --
 -- @return {BlueprintEntity} List of blueprint entities (constant combinators) representing the configuration.
 --
 function main.personal_logistics_configuration_to_constant_combinators(entity)
 
     -- Determine function to invoke for reading logistic slot information.
-    local get_logistic_slot =
-        entity.type == "character" and entity.get_personal_logistic_slot or
-        entity.type == "spider-vehicle" and entity.get_vehicle_logistic_slot
+    local _, get_logistic_slot = main.get_logistic_slot_functions(entity)
 
-    -- Initialise list of constant combinators that will hold the template. Combinators are meant to be laid-out in a
-    -- grid pattern, and populated column by column. Each column can contain a maximum of 10 combinators. Make sure that
-    -- at least one combinator is added in case there are no personal logistics requests configured.
+    -- Set-up a list of empty combinators that will represent the configuration.
     local combinators = {}
 
-    for i = 1, entity.request_slot_count == 0 and 1 or math.ceil(entity.request_slot_count/10) do
-        local x = math.ceil(i/10)
-        local y = i % 10
-        y = y == 0 and 10 or y
+    for i = 1, entity.request_slot_count == 0 and 1 or entity.request_slot_count do
+
+        -- Calculate combinator position in the blueprint. Lay them out in rows, each row with up to 10 slots.
+        local x = (i - 1) % 10 + 1
+        local y = math.ceil(i/10)
 
         table.insert(
             combinators,
@@ -225,17 +248,15 @@ function main.personal_logistics_configuration_to_constant_combinators(entity)
 
     -- Populate combinators with slot requests.
     for slot_index = 1, entity.request_slot_count do
+
         local slot = get_logistic_slot(slot_index)
 
         if slot.name then
-            -- Each combinator stores configuration for 10 slots at a time.
-            local combinator = combinators[math.ceil(slot_index/10)]
-            local filter_index = slot_index % 10
-            filter_index = filter_index == 0 and 10 or filter_index
+            local combinator = combinators[slot_index]
 
-            -- Minimum quantities are kept in the first row of a combinator.
+            -- Minimum quantities are kept in the first slot of the first row.
             local filter_min = {
-                index = filter_index,
+                index = 1,
                 -- Combinator signals use signed 32-bit integers, whereas slot requests are unsigned 32-bit
                 -- integers. Store overflows as negative values.
                 count = slot.min > 2147483647 and - slot.min + 2147483647 or slot.min,
@@ -246,9 +267,9 @@ function main.personal_logistics_configuration_to_constant_combinators(entity)
             }
             table.insert(combinator.control_behavior.filters, filter_min)
 
-            -- Maximum quantities are kept in the second row of a combinator.
+            -- Maximum quantities are kept in the first slot of the second row.
             local filter_max = {
-                index = filter_index + 10,
+                index = 11,
                 -- Combinator signals use signed 32-bit integers, whereas slot requests are unsigned 32-bit
                 -- integers. Store overflows as negative values.
                 count = slot.max > 2147483647 and - slot.max + 2147483647 or slot.max,
@@ -267,6 +288,8 @@ end
 
 --- Converts list of (blueprint entity) constant combinators into personal logistics configuration.
 --
+-- Function assumes that the passed-in list of constant combinators has been validated (see main.is_valid_template).
+--
 -- @param combinators {BlueprintEntity} List of constant combinators representing personal logistics configuration.
 --
 -- @return {uint = LogisticParameters} Mapping between personal logistic slot indices and slot configuration.
@@ -274,12 +297,12 @@ end
 function main.constant_combinators_to_personal_logistics_configuration(combinators)
     local slots = {}
 
-    -- Sort the passed-in combinators by coordinates - this should ensure that even if player was creating/modifying the
-    -- template by hand, it should still have correct ordering.
+    -- Sort the passed-in combinators by coordinates. This should help get a somewhat sane ordering even if player has
+    -- been messing with the constant combinator layout. Slots are read from top to bottom and from left to right.
     local sort_by_coordinate = function(elem1, elem2)
-        if elem1.position.x < elem2.position.x then
+        if elem1.position.y < elem2.position.y then
             return true
-        elseif elem1.position.x == elem2.position.x and elem1.position.y < elem2.position.y then
+        elseif elem1.position.y == elem2.position.y and elem1.position.x < elem2.position.x then
             return true
         end
 
@@ -287,31 +310,26 @@ function main.constant_combinators_to_personal_logistics_configuration(combinato
     end
     table.sort(combinators, sort_by_coordinate)
 
-    -- Each combinator represents one row of personal logistics.
-    for row, combinator in pairs(combinators) do
-        local slot_offset = (row - 1) * 10
-        if combinator.control_behavior then
-            -- Extract slot configuration from combinator filters.
-            for _, filter in pairs(combinator.control_behavior.filters) do
-                if filter.index <= 10 then
-                    local slot_index = slot_offset + filter.index
-                    slots[slot_index] = slots[slot_index] or {}
-                    slots[slot_index].name = filter.signal.name
-                    slots[slot_index].min = filter.count < 0 and - filter.count + 2147483647 or filter.count
-                else
-                    local slot_index = slot_offset + filter.index - 10
-                    slots[slot_index] = slots[slot_index] or {}
-                    slots[slot_index].name = filter.signal.name
-                    slots[slot_index].max = filter.count < 0 and - filter.count + 2147483647 or filter.count
-                end
-            end
-        end
-    end
+    -- Each combinator corresponds to a single slot in personal logistics requests.
+    for slot_index, combinator in pairs(combinators) do
+        if combinator.control_behavior and combinator.control_behavior.filters then
 
-    -- Ensure that minimum is not greater than maximum (to avoid game crashes when setting the slot configuration).
-    for slot_index, slot in pairs(slots) do
-        if slot.min and slot.max and slot.min > slot.max then
-            slot.min, slot.max = slot.max, slot.min
+            local minimum_filter, maximum_filter =
+                combinator.control_behavior.filters[1], combinator.control_behavior.filters[2]
+
+            local slot = {
+                name = minimum_filter.signal.name,
+                min = minimum_filter.count < 0 and - minimum_filter.count + 2147483647 or minimum_filter.count,
+                max = maximum_filter.count < 0 and - maximum_filter.count + 2147483647 or maximum_filter.count
+            }
+
+            -- Ensure that minimum is not greater than maximum (to avoid game crashes when setting the slot configuration).
+            if slot.min > slot.max then
+                slot.min, slot.max = slot.max, slot.min
+            end
+
+            slots[slot_index] = slot
+
         end
     end
 

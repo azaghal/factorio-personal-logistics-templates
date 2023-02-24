@@ -43,13 +43,9 @@ Hold a blank deconstruction planner while the character or spidertron windows ar
 
 Valid personal logistics requests blueprints contain only constant combinators, with signals specifying minimum and maximum values for personal logistics requests.
 
-Each constant combinator represents a single line of slots in the personal logistics requests configuration. Constant combinators are laid-out in columns of up to ten, and each column is read from left to right. For example:
+Each constant combinator represents a single slot in the personal logistics requests configuration. Constant combinators are read from top to bottom and from left to right. Normally they will be laid-out aligned rows, with each row consisting out of 10 combinators (mapping directly to the layout in personal logistics requests window).
 
--   Constant combinator in first column, first row corresponds to first row of personal logistics requests slots.
--   Constant combinator in first column, second row corresponds to second row of personal logistics requests slots.
--   Constant combinator in second column, first row corresponds to eleventh row of personal logistics requests slots.
-
-In an individual constant combinator, the top ten signals correspond to minimum values, while bottom ten signals correspond to maximum values for a particular item request slot (in a single row). The item type for top and bottom slot in a column must match.
+Each constant combinator has minimum and maximum values specified in the first slot of the first and second row (respectively). The mod will tolerate if minimum/maximum values are swapped around. Both slots must be defined, and must have the matching items. No other slots can be defined.
 
 Since constant combinators use _signed_ 32-bit integers, and personal logistics slots use _unsigned_ 32-bit integers, overflowing values are stored as negative values, with -1 corresponding to 2147483648, and -2147483648 corresponding to 4294967296. The 4294967296 (-2147483648) value specifically corresponds to infinte amount in a personal logistics request.
 
