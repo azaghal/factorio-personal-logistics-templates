@@ -5,7 +5,7 @@ Date: 9999-99-99
   Features:
     - Import and export player personal logistics requests as blueprint templates.
     - Import and export spidertron personal logistics requests as blueprint templates.
-    - Multple modes of operation for import (import/increment/decrement/set).
-    - Set trash-all requests (maximum amount of zero) for all currently unrequested items.
+    - Multple modes of operation for import (import/append/increment/decrement/set).
+    - Manage trash-all requests (maximum amount of zero) for all currently unrequested items.
     - Clear all personal logistics requests with a single click.
   Bugfixes:

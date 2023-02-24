@@ -385,6 +385,40 @@ function main.import(player)
 end
 
 
+--- Appends logistics requests using the held blueprint.
+--
+-- @param player LuaPlayer Player that has requested the setting of requests.
+--
+function main.append(player)
+    local entities = player.get_blueprint_entities()
+
+    if not main.is_valid_template(entities) then
+        player.print({"error.plt-invalid-template"})
+        return
+    end
+
+    -- Determine what entity is targeted.
+    local entity = main.get_opened_gui_entity(player)
+    if not entity then
+        return
+    end
+
+    -- Determine what functions to use for setting/getting logistic slot information.
+    local set_logistic_slot, get_logistic_slot = main.get_logistic_slot_functions(entity)
+
+    -- Convert constant combinators into personal logistics configuration.
+    local slots = main.constant_combinators_to_personal_logistics_configuration(entities)
+
+    -- Find first empty row for appending new requests.
+    local slot_index_offset = math.ceil(entity.request_slot_count / 10) * 10
+
+    -- Append the template.
+    for slot_index, slot in pairs(slots) do
+        set_logistic_slot(slot_index_offset + slot_index, slot)
+    end
+end
+
+
 --- Add and increment personal logistics requests using the held blueprint.
 --
 -- @param player LuaPlayer Player that has requested the increment.
@@ -807,6 +841,7 @@ end
 function main.register_gui_handlers()
     gui.register_handler("plt_export_button", main.export)
     gui.register_handler("plt_import_button", main.import)
+    gui.register_handler("plt_append_button", main.append)
     gui.register_handler("plt_increment_button", main.increment)
     gui.register_handler("plt_decrement_button", main.decrement)
     gui.register_handler("plt_set_button", main.set)

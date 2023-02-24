@@ -64,6 +64,16 @@ function gui.initialise(player)
             tags = { mode = "import" }
         }
 
+        local append_button = panel.add{
+            type = "sprite-button",
+            name = "plt_append_button",
+            style = "shortcut_bar_button_blue",
+            visible = false,
+            sprite = "plt-append-template-button",
+            tooltip = {"gui.plt-append"},
+            tags = { mode = "import" }
+        }
+
         local increment_button = panel.add{
             type = "sprite-button",
             name = "plt_increment_button",
