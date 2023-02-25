@@ -165,9 +165,9 @@ end
 -- @param player LuaPlayer Player that has requested the increment.
 --
 function main.increment(player)
-    local bluperint_entities = player.get_blueprint_entities()
+    local blueprint_entities = player.get_blueprint_entities()
 
-    if not template.is_valid_template(bluperint_entities) then
+    if not template.is_valid_template(blueprint_entities) then
         player.print({"error.plt-invalid-template"})
         return
     end
@@ -178,7 +178,7 @@ function main.increment(player)
         return
     end
 
-    requests.increment(entity, bluperint_entities)
+    requests.increment(entity, blueprint_entities)
 
 end
 
@@ -267,7 +267,7 @@ end
 --
 -- @param player LuaPlayer Player that has requested clearing of all requests.
 --
-function main.clear_requests_button(player)
+function main.clear_requests(player)
 
     -- Determine what entity is targeted.
     local entity = utils.get_opened_gui_entity(player)
@@ -291,7 +291,7 @@ function main.register_gui_handlers()
     gui.register_handler("plt_set_button", main.set)
     gui.register_handler("plt_auto_trash_button", main.auto_trash)
     gui.register_handler("plt_clear_auto_trash_button", main.clear_auto_trash)
-    gui.register_handler("plt_clear_requests_button", main.clear_requests_button)
+    gui.register_handler("plt_clear_requests_button", main.clear_requests)
 end
 
 
