@@ -5,6 +5,7 @@
 local gui = require("scripts.gui")
 local utils = require("scripts.utils")
 local template = require("scripts.template")
+local requests = require("scripts.requests")
 
 
 local main = {}
@@ -85,7 +86,7 @@ function main.update_button_visibility(player)
 end
 
 
---- Exports personal logistics template for given player into a held (empty) blueprint.
+--- Exports personal logistics template for requesting player's opened entity into a held (empty) blueprint.
 --
 -- @param player LuaPlayer Player that has requested the export.
 --
@@ -97,23 +98,16 @@ function main.export(player)
         return
     end
 
-    -- Determine what entity is targeted.
+    -- Determine what entity is targeted by the player.
     local entity = utils.get_opened_gui_entity(player)
     if not entity then
         return
     end
 
-    local combinators = template.personal_logistics_configuration_to_constant_combinators(entity)
-
-    -- Set the blueprint content and change default icons.
-    player.cursor_stack.set_blueprint_entities(combinators)
-    player.cursor_stack.blueprint_icons = {
-        { index = 1, signal = {type = "virtual", name = "signal-P"}},
-        { index = 2, signal = {type = "virtual", name = "signal-L"}},
-        { index = 3, signal = {type = "virtual", name = "signal-T"}},
-    }
+    requests.export_into_blueprint(entity, player.cursor_stack)
 
     main.update_button_visibility(player)
+
 end
 
 
@@ -122,9 +116,10 @@ end
 -- @param player LuaPlayer Player that has requested the import.
 --
 function main.import(player)
-    local entities = player.get_blueprint_entities()
 
-    if not template.is_valid_template(entities) then
+    local blueprint_entities = player.get_blueprint_entities()
+
+    if not template.is_valid_template(blueprint_entities) then
         player.print({"error.plt-invalid-template"})
         return
     end
@@ -135,19 +130,9 @@ function main.import(player)
         return
     end
 
-    -- Determine what functions to use for setting/getting logistic slot information.
-    local set_logistic_slot, get_logistic_slot = utils.get_logistic_slot_functions(entity)
+    requests.clear(entity)
+    requests.append(entity, blueprint_entities)
 
-    -- Clear the existing configuration.
-    for i = 1, entity.request_slot_count do
-        set_logistic_slot(i, {})
-    end
-
-    -- Set slot configuration from blueprint template.
-    local slots = template.constant_combinators_to_personal_logistics_configuration(entities)
-    for slot_index, slot in pairs(slots) do
-        set_logistic_slot(slot_index, slot)
-    end
 end
 
 
@@ -156,9 +141,10 @@ end
 -- @param player LuaPlayer Player that has requested the setting of requests.
 --
 function main.append(player)
-    local entities = player.get_blueprint_entities()
 
-    if not template.is_valid_template(entities) then
+    local blueprint_entities = player.get_blueprint_entities()
+
+    if not template.is_valid_template(blueprint_entities) then
         player.print({"error.plt-invalid-template"})
         return
     end
@@ -169,19 +155,8 @@ function main.append(player)
         return
     end
 
-    -- Determine what functions to use for setting/getting logistic slot information.
-    local set_logistic_slot, get_logistic_slot = utils.get_logistic_slot_functions(entity)
+    requests.append(entity, blueprint_entities)
 
-    -- Convert constant combinators into personal logistics configuration.
-    local slots = template.constant_combinators_to_personal_logistics_configuration(entities)
-
-    -- Find first empty row for appending new requests.
-    local slot_index_offset = math.ceil(entity.request_slot_count / 10) * 10
-
-    -- Append the template.
-    for slot_index, slot in pairs(slots) do
-        set_logistic_slot(slot_index_offset + slot_index, slot)
-    end
 end
 
 
