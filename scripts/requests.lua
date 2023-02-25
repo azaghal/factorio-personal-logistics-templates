@@ -137,6 +137,12 @@ function requests.decrement(entity, logistic_requests)
 
                 set_logistic_slot(already_requesting[slot.name].index, {})
 
+            -- Clear the request slot if maximum is not at infinity, and new minimum/maximum would drive the value to
+            -- zero. Makes behaviour more consistent.
+            elseif already_requesting[slot.name].max ~= 4294967295 and slot.min >= already_requesting[slot.name].min and slot.max >= already_requesting[slot.name].max then
+
+                set_logistic_slot(already_requesting[slot.name].index, {})
+
             else
 
                 -- Decrement minimum first. It must be greater than zero.
