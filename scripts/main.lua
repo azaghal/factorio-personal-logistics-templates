@@ -211,9 +211,9 @@ end
 -- @param player LuaPlayer Player that has requested the setting of requests.
 --
 function main.set(player)
-    local entities = player.get_blueprint_entities()
+    local blueprint_entities = player.get_blueprint_entities()
 
-    if not template.is_valid_template(entities) then
+    if not template.is_valid_template(blueprint_entities) then
         player.print({"error.plt-invalid-template"})
         return
     end
@@ -224,38 +224,8 @@ function main.set(player)
         return
     end
 
-    -- Determine what functions to use for setting/getting logistic slot information.
-    local set_logistic_slot, get_logistic_slot = utils.get_logistic_slot_functions(entity)
+    requests.set(entity, blueprint_entities)
 
-    -- Retrieve existing requests.
-    local already_requesting = {}
-    for slot_index = 1, entity.request_slot_count do
-        local slot = get_logistic_slot(slot_index)
-        if slot.name then
-            slot.index = slot_index
-            already_requesting[slot.name] = slot
-        end
-    end
-
-    -- Convert constant combinators into personal logistics configuration.
-    local slots = template.constant_combinators_to_personal_logistics_configuration(entities)
-
-    -- Find first empty row for appending new requests.
-    local empty_slot_index = math.ceil(entity.request_slot_count / 10) * 10 + 1
-
-    -- Process all slots, update existing slots, and append new ones.
-    for _, slot in pairs(slots) do
-        local slot_index
-
-        if already_requesting[slot.name] then
-            slot_index = already_requesting[slot.name].index
-        else
-            slot_index = empty_slot_index
-            empty_slot_index = empty_slot_index + 1
-        end
-
-        set_logistic_slot(slot_index, slot)
-    end
 end
 
 
