@@ -44,32 +44,31 @@ function requests.clear(entity)
 end
 
 
---- Appends personal logistics requests specified via passed-in combinators.
+--- Appends personal logistics requests with preserved layout.
 --
 -- @param entity LuaEntity Entity for which to append the requests.
--- @param combinators {LuaEntity} List of constant combinators defining the requests.
+-- @param logistic_requests {uint = LogisticParameters} Mapping between personal logistic slot indices and slot configurations.
 --
-function requests.append(entity, combinators)
+function requests.append(entity, logistic_requests)
 
     local set_logistic_slot, _ = utils.get_logistic_slot_functions(entity)
-    local slots = template.constant_combinators_to_personal_logistics_configuration(combinators)
 
     -- Find offset for appending new requests from the first available row.
     local slot_index_offset = math.ceil(entity.request_slot_count / 10) * 10
 
-    for slot_index, slot in pairs(slots) do
+    for slot_index, slot in pairs(logistic_requests) do
         set_logistic_slot(slot_index_offset + slot_index, slot)
     end
 
 end
 
 
---- Increments personal logistics requests by amounts specified via passed-in combinators.
+--- Increments and appends (new) personal logistics requests.
 --
 -- @param entity LuaEntity Entity for which to increment the requests.
--- @param combinators {LuaEntity} List of constant combinators defining the requests.
+-- @param logistic_requests {uint = LogisticParameters} Mapping between personal logistic slot indices and slot configurations.
 --
-function requests.increment(entity, combinators)
+function requests.increment(entity, logistic_requests)
 
     local set_logistic_slot, get_logistic_slot = utils.get_logistic_slot_functions(entity)
 
@@ -83,14 +82,11 @@ function requests.increment(entity, combinators)
         end
     end
 
-    -- Convert constant combinators into personal logistics configuration.
-    local slots = template.constant_combinators_to_personal_logistics_configuration(combinators)
-
     -- Find first empty row for appending new requests.
     local empty_slot_index = math.ceil(entity.request_slot_count / 10) * 10 + 1
 
     -- Process all slots, update existing slots, and append new ones.
-    for _, slot in pairs(slots) do
+    for _, slot in pairs(logistic_requests) do
         local slot_index
 
         if already_requesting[slot.name] then
@@ -110,12 +106,12 @@ function requests.increment(entity, combinators)
 end
 
 
---- Decrements personal logistics requests by amounts specified via passed-in combinators.
+--- Decrements personal logistics requests by amounts specified via passed-in logistics requests.
 --
 -- @param entity LuaEntity Entity for which to decrement the requests.
--- @param combinators {LuaEntity} List of constant combinators defining the requests.
+-- @param logistic_requests {uint = LogisticParameters} Mapping between personal logistic slot indices and slot configurations.
 --
-function requests.decrement(entity, combinators)
+function requests.decrement(entity, logistic_requests)
 
     -- Determine what functions to use for setting/getting logistic slot information.
     local set_logistic_slot, get_logistic_slot = utils.get_logistic_slot_functions(entity)
@@ -130,11 +126,8 @@ function requests.decrement(entity, combinators)
         end
     end
 
-    -- Convert constant combinators into personal logistics configuration.
-    local slots = template.constant_combinators_to_personal_logistics_configuration(combinators)
-
     -- Process all slots, decrementing the requested minimum/maximum quantities.
-    for _, slot in pairs(slots) do
+    for _, slot in pairs(logistic_requests) do
 
         if already_requesting[slot.name] then
 
@@ -176,15 +169,12 @@ function requests.decrement(entity, combinators)
 end
 
 
---- Sets personal logistics requests to exact values as defined by the passed-in constant combinators.
+--- Sets personal logistics requests to exact values as specified via passed-in logistics requests.
 --
 -- @param entity LuaEntity Entity for which to set the requests.
--- @param combinators {LuaEntity} List of constant combinators defining the requests.
+-- @param logistic_requests {uint = LogisticParameters} Mapping between personal logistic slot indices and slot configurations.
 --
-function requests.set(entity, combinators)
-
-    -- Convert constant combinators into personal logistics configuration.
-    local slots = template.constant_combinators_to_personal_logistics_configuration(combinators)
+function requests.set(entity, logistic_requests)
 
     -- Determine what functions to use for setting/getting logistic slot information.
     local set_logistic_slot, get_logistic_slot = utils.get_logistic_slot_functions(entity)
@@ -203,7 +193,7 @@ function requests.set(entity, combinators)
     local empty_slot_index = math.ceil(entity.request_slot_count / 10) * 10 + 1
 
     -- Process all slots, update existing slots, and append new ones.
-    for _, slot in pairs(slots) do
+    for _, slot in pairs(logistic_requests) do
         local slot_index
 
         if already_requesting[slot.name] then

@@ -92,20 +92,11 @@ end
 --
 function main.export(player)
 
-    -- Make sure the player is holding an empty blueprint before proceeding.
-    if not (player.cursor_stack and player.cursor_stack.valid_for_read and player.cursor_stack.name == "blueprint") then
-        player.print({"error.plt-blueprint-not-empty"})
-        return
-    end
-
-    -- Determine what entity is targeted by the player.
     local entity = utils.get_opened_gui_entity(player)
-    if not entity then
-        return
-    end
 
     requests.export_into_blueprint(entity, player.cursor_stack)
 
+    -- Player shoudl be holding a valid blueprint template at this point. Make sure correct buttons are visible.
     main.update_button_visibility(player)
 
 end
@@ -118,20 +109,11 @@ end
 function main.import(player)
 
     local blueprint_entities = player.get_blueprint_entities()
-
-    if not template.is_valid_template(blueprint_entities) then
-        player.print({"error.plt-invalid-template"})
-        return
-    end
-
-    -- Determine what entity is targeted.
+    local logistic_requests = template.constant_combinators_to_personal_logistics_configuration(blueprint_entities)
     local entity = utils.get_opened_gui_entity(player)
-    if not entity then
-        return
-    end
 
     requests.clear(entity)
-    requests.append(entity, blueprint_entities)
+    requests.append(entity, logistic_requests)
 
 end
 
@@ -143,19 +125,10 @@ end
 function main.append(player)
 
     local blueprint_entities = player.get_blueprint_entities()
-
-    if not template.is_valid_template(blueprint_entities) then
-        player.print({"error.plt-invalid-template"})
-        return
-    end
-
-    -- Determine what entity is targeted.
+    local logistic_requests = template.constant_combinators_to_personal_logistics_configuration(blueprint_entities)
     local entity = utils.get_opened_gui_entity(player)
-    if not entity then
-        return
-    end
 
-    requests.append(entity, blueprint_entities)
+    requests.append(entity, logistic_requests)
 
 end
 
@@ -166,19 +139,10 @@ end
 --
 function main.increment(player)
     local blueprint_entities = player.get_blueprint_entities()
-
-    if not template.is_valid_template(blueprint_entities) then
-        player.print({"error.plt-invalid-template"})
-        return
-    end
-
-    -- Determine what entity is targeted.
+    local logistic_requests = template.constant_combinators_to_personal_logistics_configuration(blueprint_entities)    
     local entity = utils.get_opened_gui_entity(player)
-    if not entity then
-        return
-    end
 
-    requests.increment(entity, blueprint_entities)
+    requests.increment(entity, logistic_requests)
 
 end
 
@@ -189,19 +153,10 @@ end
 --
 function main.decrement(player)
     local blueprint_entities = player.get_blueprint_entities()
-
-    if not template.is_valid_template(blueprint_entities) then
-        player.print({"error.plt-invalid-template"})
-        return
-    end
-
-    -- Determine what entity is targeted.
+    local logistic_requests = template.constant_combinators_to_personal_logistics_configuration(blueprint_entities)    
     local entity = utils.get_opened_gui_entity(player)
-    if not entity then
-        return
-    end
 
-    requests.decrement(entity, blueprint_entities)
+    requests.decrement(entity, logistic_requests)
 
 end
 
@@ -212,19 +167,10 @@ end
 --
 function main.set(player)
     local blueprint_entities = player.get_blueprint_entities()
-
-    if not template.is_valid_template(blueprint_entities) then
-        player.print({"error.plt-invalid-template"})
-        return
-    end
-
-    -- Determine what entity is targeted.
+    local logistic_requests = template.constant_combinators_to_personal_logistics_configuration(blueprint_entities)
     local entity = utils.get_opened_gui_entity(player)
-    if not entity then
-        return
-    end
 
-    requests.set(entity, blueprint_entities)
+    requests.set(entity, logistic_requests)
 
 end
 
