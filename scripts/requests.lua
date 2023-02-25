@@ -219,4 +219,88 @@ function requests.set(entity, combinators)
 end
 
 
+--- Sets auto-trash requests for an entity.
+--
+-- Primarily useful for working with construction spidertrons to ensure their inventories never get filled-up.
+--
+-- @param entity LuaEntity Entity for which to set the requests.
+--
+function requests.auto_trash(entity)
+
+    -- Determine what functions to use for setting/getting logistic slot information.
+    local set_logistic_slot, get_logistic_slot = utils.get_logistic_slot_functions(entity)
+
+    -- Retrieve existing requests.
+    local already_requesting = {}
+    for slot_index = 1, entity.request_slot_count do
+        local slot = get_logistic_slot(slot_index)
+        if slot.name then
+            already_requesting[slot.name] = true
+        end
+    end
+
+    -- Exclude all blueprint and hidden items.
+    local item_prototypes = game.get_filtered_item_prototypes({
+            {filter = "type", type = "blueprint", invert = true},
+            {filter = "type", type = "deconstruction-item", invert = true, mode = "and"},
+            {filter = "type", type = "upgrade-item", invert = true, mode = "and"},
+            {filter = "type", type = "blueprint-book", invert = true, mode = "and"},
+            {filter = "flag", flag = "hidden", invert = true, mode = "and"}
+    })
+
+    -- Retrieve information about the existing auto-trash requests.
+    local auto_trash_info = template.get_auto_trash_info(entity)
+
+    -- Keep track of slot index where request should be added. Setting this to zero ensures we can compare it later on
+    -- against auto_trash_info.append in the loop.
+    local slot_index = 0
+
+    -- Populate auto-trash slots.
+    for item_name, item_prototype in pairs(item_prototypes) do
+
+        if not already_requesting[item_name] then
+
+            -- Grab first gap in auto-trash slots (if any).
+            local slot_gap = table.remove(auto_trash_info.gaps, 1)
+
+            -- Try to populate auto-trash slot gaps first, then start appending at the end.
+            slot_index =
+                slot_gap ~= nil and slot_gap or
+                slot_index < auto_trash_info.append and auto_trash_info.append or
+                slot_index + 1
+
+            local slot = {
+                name = item_name,
+                min = 0,
+                max = 0
+            }
+            set_logistic_slot(slot_index, slot)
+
+        end
+
+    end
+
+end
+
+
+--- Clear auto-trash requests for an entity.
+--
+-- @param entity LuaEntity Entity for which to clear the auto-trash requests.
+--
+function requests.clear_auto_trash(entity)
+
+    -- Determine what function to use for setting logistic slot information.
+    local set_logistic_slot, _ = utils.get_logistic_slot_functions(entity)
+
+    -- Fetch information about auto-trash slots.
+    local auto_trash_info = template.get_auto_trash_info(entity)
+
+    -- Clear auto-trash slots.
+    for slot_index, _ in pairs(auto_trash_info.slots) do
+       set_logistic_slot(slot_index, { name=nil } )
+    end
+
+end
+
+
 return requests
