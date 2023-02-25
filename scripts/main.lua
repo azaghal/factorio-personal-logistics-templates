@@ -3,6 +3,7 @@
 
 
 local gui = require("scripts.gui")
+local utils = require("scripts.utils")
 
 
 local main = {}
@@ -115,50 +116,6 @@ function main.is_valid_template(entities)
 end
 
 
---- Determines setter and getter functions for logistic slots for passed-in entity.
---
--- Characters and spidertrons use differently named functions, and this little helper allows to abstract away this
--- detail.
---
--- @param entity LuaEntity Entity for which to get setter/getter.
---
--- @return {function, function} Setter and getter function for manipulating the logistics slots of an entity.
---
-function main.get_logistic_slot_functions(entity)
-
-    local set_logistic_slot =
-        entity.type == "character" and entity.set_personal_logistic_slot or
-        entity.type == "spider-vehicle" and entity.set_vehicle_logistic_slot or
-        nil
-
-    local get_logistic_slot =
-        entity.type == "character" and entity.get_personal_logistic_slot or
-        entity.type == "spider-vehicle" and entity.get_vehicle_logistic_slot or
-        nil
-
-    return set_logistic_slot, get_logistic_slot
-end
-
-
---- Checks if item stack is a blank deconstruction planner.
---
--- @param item_stack LuaItemStack Item stack to check.
---
--- @return bool true if passted-in item stack is blank deconstruction planner, false otherwise.
---
-function main.is_blank_deconstruction_planner(item_stack)
-    if item_stack.valid_for_read and
-        item_stack.is_deconstruction_item and
-        table_size(item_stack.entity_filters) == 0 and
-        table_size(item_stack.tile_filters) == 0 then
-
-        return true
-    end
-
-    return false
-end
-
-
 --- Updates visibility of import/export buttons for a given player based on held cursor stack.
 --
 -- @param player LuaPlayer Player for which to update button visibility.
@@ -174,35 +131,12 @@ function main.update_button_visibility(player)
         gui.set_mode(player, "export")
     elseif main.is_valid_template(entities) then
         gui.set_mode(player, "import")
-    elseif main.is_blank_deconstruction_planner(player.cursor_stack) then
+    elseif utils.is_blank_deconstruction_planner(player.cursor_stack) then
         gui.set_mode(player, "modify")
     else
         gui.set_mode(player, "hidden")
     end
 
-end
-
-
---- Determines what entity the current GUI is opened for.
---
--- In case of an invalid entity, an error message is shown to the player.
---
--- @param LuaPlayer Player to check the opened GUI for.
---
--- @return LuaEntity|nil Entity for which the current GUI is opened for, or nil in case of unsupported entity.
---
-function main.get_opened_gui_entity(player)
-
-    if player.opened_gui_type == defines.gui_type.controller then
-        entity = player.character
-    elseif player.opened_gui_type == defines.gui_type.entity and player.opened.type == "spider-vehicle" then
-        entity = player.opened
-    else
-        player.print({"error.plt-invalid-entity"})
-        entity = nil
-    end
-
-    return entity
 end
 
 
@@ -224,7 +158,7 @@ end
 function main.personal_logistics_configuration_to_constant_combinators(entity)
 
     -- Determine function to invoke for reading logistic slot information.
-    local _, get_logistic_slot = main.get_logistic_slot_functions(entity)
+    local _, get_logistic_slot = utils.get_logistic_slot_functions(entity)
 
     -- Set-up a list of empty combinators that will represent the configuration.
     local combinators = {}
@@ -350,7 +284,7 @@ function main.export(player)
     end
 
     -- Determine what entity is targeted.
-    local entity = main.get_opened_gui_entity(player)
+    local entity = utils.get_opened_gui_entity(player)
     if not entity then
         return
     end
@@ -382,13 +316,13 @@ function main.import(player)
     end
 
     -- Determine what entity is targeted.
-    local entity = main.get_opened_gui_entity(player)
+    local entity = utils.get_opened_gui_entity(player)
     if not entity then
         return
     end
 
     -- Determine what functions to use for setting/getting logistic slot information.
-    local set_logistic_slot, get_logistic_slot = main.get_logistic_slot_functions(entity)
+    local set_logistic_slot, get_logistic_slot = utils.get_logistic_slot_functions(entity)
 
     -- Clear the existing configuration.
     for i = 1, entity.request_slot_count do
@@ -416,13 +350,13 @@ function main.append(player)
     end
 
     -- Determine what entity is targeted.
-    local entity = main.get_opened_gui_entity(player)
+    local entity = utils.get_opened_gui_entity(player)
     if not entity then
         return
     end
 
     -- Determine what functions to use for setting/getting logistic slot information.
-    local set_logistic_slot, get_logistic_slot = main.get_logistic_slot_functions(entity)
+    local set_logistic_slot, get_logistic_slot = utils.get_logistic_slot_functions(entity)
 
     -- Convert constant combinators into personal logistics configuration.
     local slots = main.constant_combinators_to_personal_logistics_configuration(entities)
@@ -450,13 +384,13 @@ function main.increment(player)
     end
 
     -- Determine what entity is targeted.
-    local entity = main.get_opened_gui_entity(player)
+    local entity = utils.get_opened_gui_entity(player)
     if not entity then
         return
     end
 
     -- Determine what functions to use for setting/getting logistic slot information.
-    local set_logistic_slot, get_logistic_slot = main.get_logistic_slot_functions(entity)
+    local set_logistic_slot, get_logistic_slot = utils.get_logistic_slot_functions(entity)
 
     -- Retrieve existing requests.
     local already_requesting = {}
@@ -507,13 +441,13 @@ function main.decrement(player)
     end
 
     -- Determine what entity is targeted.
-    local entity = main.get_opened_gui_entity(player)
+    local entity = utils.get_opened_gui_entity(player)
     if not entity then
         return
     end
 
     -- Determine what functions to use for setting/getting logistic slot information.
-    local set_logistic_slot, get_logistic_slot = main.get_logistic_slot_functions(entity)
+    local set_logistic_slot, get_logistic_slot = utils.get_logistic_slot_functions(entity)
 
     -- Retrieve existing requests.
     local already_requesting = {}
@@ -583,13 +517,13 @@ function main.set(player)
     end
 
     -- Determine what entity is targeted.
-    local entity = main.get_opened_gui_entity(player)
+    local entity = utils.get_opened_gui_entity(player)
     if not entity then
         return
     end
 
     -- Determine what functions to use for setting/getting logistic slot information.
-    local set_logistic_slot, get_logistic_slot = main.get_logistic_slot_functions(entity)
+    local set_logistic_slot, get_logistic_slot = utils.get_logistic_slot_functions(entity)
 
     -- Retrieve existing requests.
     local already_requesting = {}
@@ -633,13 +567,13 @@ end
 function main.auto_trash(player)
 
     -- Determine what entity is targeted.
-    local entity = main.get_opened_gui_entity(player)
+    local entity = utils.get_opened_gui_entity(player)
     if not entity then
         return
     end
 
     -- Determine what functions to use for setting/getting logistic slot information.
-    local set_logistic_slot, get_logistic_slot = main.get_logistic_slot_functions(entity)
+    local set_logistic_slot, get_logistic_slot = utils.get_logistic_slot_functions(entity)
 
     -- Retrieve existing requests.
     local already_requesting = {}
@@ -734,7 +668,7 @@ function main.get_auto_trash_info(entity)
     end
 
     -- Determine getter function for logistic slot information.
-    local _, get_logistic_slot = main.get_logistic_slot_functions(entity)
+    local _, get_logistic_slot = utils.get_logistic_slot_functions(entity)
 
     -- Keep track of previous and current row type.
     local row_type, previous_row_type
@@ -812,13 +746,13 @@ end
 function main.clear_auto_trash(player)
 
     -- Determine what entity is targeted.
-    local entity = main.get_opened_gui_entity(player)
+    local entity = utils.get_opened_gui_entity(player)
     if not entity then
         return
     end
 
     -- Determine what function to use for setting logistic slot information.
-    local set_logistic_slot, _ = main.get_logistic_slot_functions(entity)
+    local set_logistic_slot, _ = utils.get_logistic_slot_functions(entity)
 
     -- Fetch information about auto-trash slots.
     local auto_trash_info = main.get_auto_trash_info(entity)
@@ -838,13 +772,13 @@ end
 function main.clear_requests_button(player)
 
     -- Determine what entity is targeted.
-    local entity = main.get_opened_gui_entity(player)
+    local entity = utils.get_opened_gui_entity(player)
     if not entity then
         return
     end
 
     -- Determine what functions to use for setting/getting logistic slot information.
-    local set_logistic_slot, get_logistic_slot = main.get_logistic_slot_functions(entity)
+    local set_logistic_slot, get_logistic_slot = utils.get_logistic_slot_functions(entity)
 
     -- Clear all requests.
     for slot_index = 1, entity.request_slot_count do
