@@ -34,7 +34,7 @@ end
 --
 -- @param event EventData Event data as passed-in by the game engine.
 --
-function handlers.on_player_removed(event)
+function handlers.on_pre_player_removed(event)
     local player = game.players[event.player_index]
 
     main.destroy_player_data(player)
