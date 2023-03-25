@@ -2,7 +2,7 @@
 #
 # factorio_development.sh
 #
-# Copyright (C) 2022, Branko Majic <branko@majic.rs>
+# Copyright (C) 2023, Branko Majic <branko@majic.rs>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 set -u
 
 PROGRAM="factorio_development.sh"
-VERSION="1.1.0"
+VERSION="1.1.1"
 
 function usage() {
     cat <<EOF
@@ -896,8 +896,10 @@ function command_release() {
         return 1
     fi
 
-    # Switch back to development version.
-    sed -i -e "s/$version/999.999.999/" "$info_file"
+    # Switch back to development version. Include double quotes in
+    # order to avoid accidental replacement of version strings in
+    # dependencies.
+    sed -i -e "s/\"$version\"/\"999.999.999\"/" "$info_file"
     changelog=$(cat <<EOF
 ---------------------------------------------------------------------------------------------------
 Version: 999.999.999
